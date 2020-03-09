@@ -1,0 +1,40 @@
+<section>
+    <div class="hero-body has-text-centered">
+        <h1 class="is-size-1">Welcome to <em>MuscleApp</em></h1>
+        <p>Here you can keep track of your workout progress, share your best tips and become stronger together.</p>
+    </div>
+</section>
+<!-- ******' -- >
+            <!-- Developers -->
+        <div class="section">
+            <div class="row columns is-multiline">
+              {{#each allBlogs}}
+                <div class="column is-one-third">
+                    <div class="card large">
+                        <div class="card-image">
+                            <figure class="image">
+                                <img src="https://images.unsplash.com/photo-1475778057357-d35f37fa89dd?dpr=1&auto=compress,format&fit=crop&w=1920&h=&q=80&cs=tinysrgb&crop=" alt="Image">
+                            </figure>
+                        </div>
+                        <div class="card-content">
+                            <form action="/blog/blog" method="get">
+                            <div class="title">
+
+                            </div>
+
+                            <p>{{this.title}}</p>
+
+                            <div class="content">
+                                {{this.content}}
+                                <div class="background-icon"><span class="icon-twitter"></span></div>
+                            </div>
+                            <button class="btn btn-outline-primary col-sm-6" type="submit" name="blog"value={{this.title}}>Show Article</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+  
+            <!-- End Developers -->
