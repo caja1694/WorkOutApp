@@ -25,14 +25,22 @@ module.exports = function(container){
 	})
 
 	router.get("/about", function(request, response){
-		response.render("about.hbs")
+		const model = getSession(request)
+		response.render("about.hbs", model)
 	})
 
 	router.get("/contact", function(request, response){
-		response.render("contact.hbs")
+		const model = getSession(request)
+		response.render("contact.hbs", model)
 	})
 	return router
 
+}
+function getSession(request){
+	if(request.session.activeUser){
+		return {activeUser: request.session.activeUser.username}
+	}
+	return null
 }
 
 

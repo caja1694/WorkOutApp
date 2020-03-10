@@ -70,9 +70,13 @@ module.exports = function(container){
 			
 			db.query(query, values, function(error, results){
 				if(error){
-					// TODO: Look for usernameUnique violation.
-					console.log(error)
-					callback(['databaseError'], null)
+					if(error.code == 'ER_DUP_ENTRY'){
+						callback(["Username is already taken"], null)
+					}
+					else{
+						console.log(error)
+						callback(['databaseError'], null)
+					}
 				}else{
 					callback([], results.insertId)
 				}

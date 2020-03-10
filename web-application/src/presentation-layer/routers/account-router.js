@@ -1,5 +1,4 @@
 const express = require('express')
-console.log("In account router")
 
 module.exports = function({accountManager}){
 
@@ -29,8 +28,10 @@ module.exports = function({accountManager}){
 			console.log(errors, accounts)
 			const model = {
 				errors: errors,
-				accounts: accounts
+				accounts: accounts,
+				activeUser: getSession(request)
 			}
+			console.log(model)
 			response.render("accounts-list-all.hbs", model)
 		})
 	})
@@ -54,7 +55,8 @@ module.exports = function({accountManager}){
 		const account = {
 			username: request.body.username,
 			email: request.body.email,
-			password: request.body.password
+			password: request.body.password,
+			confirmationPassword: request.body.confirmationPassword
 		}
 		accountManager.createAccount(account, function(errors){
 			if(0 < errors.length){
@@ -91,4 +93,10 @@ module.exports = function({accountManager}){
 	
 	return router
 
+}
+function getSession(request){
+	if(request.session.activeUser){
+		return {activeUser: request.session.activeUser.username}
+	}
+	return null
 }

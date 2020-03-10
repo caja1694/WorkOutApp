@@ -12,6 +12,8 @@ module.exports = function(container){
 				errors.push("usernameTooShort")
 			}else if(MAX_USERNAME_LENGTH < account.username.length){
 				errors.push("usernameTooLong")
+			}else if(account.password != account.confirmationPassword){
+				errors.push("Passwords didn't match")
 			}
 			return errors
 		}

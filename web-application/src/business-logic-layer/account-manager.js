@@ -23,7 +23,6 @@ module.exports = function({accountRepo, accountValidator}){
 		},
 
 		getAccountForLogin: function(enteredAccount, callback){
-
 			accountRepo.getAccountByUsername(enteredAccount.username, function(errors, accountFromDB){
 				console.log("accountmanager accountfromdb: ", accountFromDB)
 				if(0 < errors.length){

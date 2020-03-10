@@ -24,6 +24,9 @@
 				<div class="navbar-start">
 					<a class="navbar-item" href="/">Home</a>
 					<a class="navbar-item" href="/accounts">Accounts</a>
+					{{#if activeUser}}
+					<a class="navbar-item" href="/myWorkouts">My Workouts</a>
+					{{/if}}
 				</div>
 				
 				<div class="navbar-end">

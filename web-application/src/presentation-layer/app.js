@@ -15,6 +15,8 @@ const accountManagerFun = require('../business-logic-layer/account-manager')
 const accoutValidatorFun = require('../business-logic-layer/account-validator')
 const accountRouterFun = require('../presentation-layer/routers/account-router')
 const variousRouterFun = require('../presentation-layer/routers/various-router')
+const myWorkoutsRouterFun = require('../presentation-layer/routers/my-workouts-router')
+container.register('myWorkoutsRouter', awilix.asFunction(myWorkoutsRouterFun))
 container.register('accountRepo', awilix.asFunction(accountRepoFun))
 container.register('accountManager', awilix.asFunction(accountManagerFun))
 container.register('accountValidator', awilix.asFunction(accoutValidatorFun))
@@ -22,6 +24,7 @@ container.register('accountRouter', awilix.asFunction(accountRouterFun))
 container.register('variousRouter', awilix.asFunction(variousRouterFun))
 const accountRouter = container.resolve('accountRouter')
 const variousRouter = container.resolve('variousRouter')
+const myWorkoutsRouter = container.resolve('myWorkoutsRouter')
 
 const app = express()
 
@@ -52,6 +55,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 // Attach all routers.
 app.use('/', variousRouter)
 app.use('/accounts', accountRouter)
+app.use('/myWorkouts', myWorkoutsRouter)
 
 // Start listening for incoming HTTP requests!
 app.listen(8080, function(){
