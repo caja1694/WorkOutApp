@@ -1,4 +1,19 @@
-const db = require('./db')
+const db = require('../data-access-layer2/db2')
+
+const Sequelize = require('sequelize')
+const sequelize = new Sequelize('webAppDatabase2', 'root', 'theRootPassword',{
+	host: 'database2',
+	dialect: 'mysql'
+})
+
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.');
+  })
+  .catch(err => {
+    console.error('Unable to connect to the database:', err);
+  });
 
 
 module.exports = function(container){
@@ -7,19 +22,24 @@ module.exports = function(container){
 		Retrieves all accounts ordered by username.
 		Possible errors: databaseError
 		Success value: The fetched accounts in an array.
-		*/
-		getAllAccounts: function(callback){
-			const query = `SELECT * FROM accounts ORDER BY username`
-			const values = []
-			
-			db.query(query, values, function(error, accounts){
-				if(error){
-					callback(['databaseError'], null)
-				}else{
-					callback([], accounts)
-				}
-			})
-		},
+        */
+        getAllAccounts: function(callback){
+            const account = sequelize.define('account', {
+                username: Sequelize.TEXT,
+                email: Sequelize.TEXT,
+                password: Sequelize.TEXT
+            })
+            account.findAll().
+            then(function(accounts){
+				console.log(accounts.length)
+                callback([], [accounts[0].dataValues])
+            }).
+            catch(function(error){
+				console.error(error);
+                callback(['databaseError'], null)
+            })
+        },
+
 		/*
 		Retrieves the account with the given username.
 		Possible errors: databaseError

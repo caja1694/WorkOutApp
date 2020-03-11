@@ -31,7 +31,7 @@ module.exports = function({accountManager}){
 				accounts: accounts,
 				activeUser: getSession(request)
 			}
-			console.log(model)
+			console.log("IN ROUTER: ", model)
 			response.render("accounts-list-all.hbs", model)
 		})
 	})

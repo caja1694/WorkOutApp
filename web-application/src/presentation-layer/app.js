@@ -2,15 +2,11 @@ const path = require('path')
 const express = require('express')
 const expressHandlebars = require('express-handlebars')
 
-const session = require('express-session');
 
-const redis = require('redis')
-const redisClient = redis.createClient({host: 'redis-database'})
-const redisStore = require('connect-redis')(session)
-
+// Dependency injections
 const awilix = require('awilix')
 const container = awilix.createContainer()
-const accountRepoFun = require('../data-access-layer/account-repository')
+const accountRepoFun = require('../data-access-layer2/account-repository-sq')
 const accountManagerFun = require('../business-logic-layer/account-manager')
 const accoutValidatorFun = require('../business-logic-layer/account-validator')
 const accountRouterFun = require('../presentation-layer/routers/account-router')
@@ -26,11 +22,17 @@ const accountRouter = container.resolve('accountRouter')
 const variousRouter = container.resolve('variousRouter')
 const myWorkoutsRouter = container.resolve('myWorkoutsRouter')
 
+
 const app = express()
 
 // Body parser
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
+// Session + storage
+const session = require('express-session');
+const redis = require('redis')
+const redisClient = redis.createClient({host: 'redis-database'})
+const redisStore = require('connect-redis')(session)
 
 // Setup session
 app.use(session({
