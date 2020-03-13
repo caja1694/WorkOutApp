@@ -4,12 +4,22 @@
         <p>Here you can keep track of your workout progress, share your best tips and become stronger together.</p>
     </div>
 </section>
+
+<form action="/create-article" method="get">
+<div class="buttons has-addons is-centered">
+    <p class="control">
+    <button type="submit" class="button is-link">
+        Create article
+    </button>
+</p>
+</div>
+</form>
 <!-- ******' -- >
             <!-- Developers -->
         <div class="section">
             <div class="row columns is-multiline">
-              {{#each allBlogs}}
-                <div class="column is-one-third">
+              {{#each allArticles}}
+                <div class="column is-one-third has-text-centered">
                     <div class="card large">
                         <div class="card-image">
                             <figure class="image">
@@ -17,18 +27,22 @@
                             </figure>
                         </div>
                         <div class="card-content">
-                            <form action="/blog/blog" method="get">
+                            <form action="/article/{{this.id}}" method="get">
                             <div class="title">
-
+                                    <p>{{this.title}}</p>
                             </div>
 
-                            <p>{{this.title}}</p>
+                            
+                            <div class="tags has-addons level-item">
+                                <span class="tag is-rounded">Author:</span>
+                                <span class="tag is-rounded">{{username}}</span>
+                            </div>
 
                             <div class="content">
-                                {{this.content}}
-                                <div class="background-icon"><span class="icon-twitter"></span></div>
+                                <h4>{{this.description}}</h4>
                             </div>
-                            <button class="btn btn-outline-primary col-sm-6" type="submit" name="blog"value={{this.title}}>Show Article</button>
+                            
+                            <button class="btn btn-outline-primary col-sm-6" type="submit" >Show Article</button>
                             </form>
                         </div>
                     </div>
@@ -36,5 +50,7 @@
                 {{/each}}
             </div>
         </div>
+
+        
   
             <!-- End Developers -->

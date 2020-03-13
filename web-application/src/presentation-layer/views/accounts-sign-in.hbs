@@ -1,8 +1,13 @@
 <div class="container has-text-centered">
     <div class="column is-4 is-offset-4">
+        
         <h3 class="title has-text-black">Login</h3>
         <hr class="login-hr">
-        <p class="subtitle has-text-black">Please login to proceed.</p>
+        {{#if activeUser}}
+            <p class="subtitle has-text-black">Please login to proceed.</p>  
+        {{else}}
+            <p class="subtitle has-text-black">You need to login to be able to create an article</p>
+        {{/if}}
         <p>{{error}}</p>
         <div class="box">
             <form action="/accounts/sign-in" method="post">
@@ -21,7 +26,7 @@
             </form>
         </div>
             <p class="has-text-grey">
-                <a href="/accounts/sign-up">Sign Up</a> &nbsp;·&nbsp;
+                <a href="/accounts/sign-up">Create new account</a>
             </p>
     </div>
 </div>

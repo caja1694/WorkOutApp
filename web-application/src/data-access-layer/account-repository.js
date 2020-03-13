@@ -37,7 +37,6 @@ module.exports = function(container){
 					callback(["No account with that username"], null)
 				}
 				else{
-					console.log("In else: ", accounts[0])
 					callback([], accounts[0])
 				}
 			})

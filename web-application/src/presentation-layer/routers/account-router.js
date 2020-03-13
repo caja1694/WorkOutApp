@@ -25,7 +25,7 @@ module.exports = function({accountManager}){
 	// Get all accounts
 	router.get("/", function(request, response){
 		accountManager.getAllAccounts(function(errors, accounts){
-			console.log(errors, accounts)
+			if(errors.length){console.log("Errors in get all acounts", errors)}
 			const model = {
 				errors: errors,
 				accounts: accounts,
@@ -71,7 +71,7 @@ module.exports = function({accountManager}){
 		})
 	})
 	// Login
-	router.post('/sign-in', function(request, response){
+		router.post('/sign-in', function(request, response){
 		const account = {
 			username: request.body.username,
 			password: request.body.password
