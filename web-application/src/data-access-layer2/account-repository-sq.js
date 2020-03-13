@@ -24,18 +24,17 @@ module.exports = function(container){
 		Success value: The fetched accounts in an array.
         */
         getAllAccounts: function(callback){
-            const account = sequelize.define('account', {
-                username: Sequelize.TEXT,
-                email: Sequelize.TEXT,
-                password: Sequelize.TEXT
-            })
-            account.findAll().
+            const accountModel = getAccountTableModel()
+            accountModel.findAll().
             then(function(accounts){
-				console.log(accounts.length)
-                callback([], [accounts[0].dataValues])
+				const accountsToReturn = []
+				for(let i = 0; i < accounts.length; i++){
+					accountsToReturn.push(accounts[i].dataValues)
+				}
+                callback([], accountsToReturn)
             }).
             catch(function(error){
-				console.error(error);
+				console.error("DATABASE ERROR IN gettAllAccounts", error);
                 callback(['databaseError'], null)
             })
         },
@@ -46,20 +45,21 @@ module.exports = function(container){
 		Success value: The fetched account, or null if no account has that username.
 		*/
 		getAccountByUsername: function(username, callback){
-			const query = `SELECT * FROM accounts WHERE username = ? LIMIT 1`
-			const values = [username]
-			
-			db.query(query, values, function(error, accounts){
-				if(error){
-					callback(['databaseError'], null)
-				}
-				else if(accounts.length == 0){
-					callback(["No account with that username"], null)
+			const accountModel = getAccountTableModel()
+			accountModel.findOne({
+				where: {username: username}
+			})
+			.then(function(account){
+				if(account){
+					callback([], account)
 				}
 				else{
-					console.log("In else: ", accounts[0])
-					callback([], accounts[0])
+					callback(["ERR_USERNAME_MISSING"], null)
 				}
+			})
+			.catch(function(error){
+				console.log("Error in getAccountByUsername: ", error)
+				callback(["ERR_DATABASE"], null)
 			})
 		},
 		/*
@@ -69,23 +69,31 @@ module.exports = function(container){
 		Success value: The id of the new account.
 		*/
 		createAccount: function(account, callback){
-			const query = `INSERT INTO accounts (username, email, password) VALUES (?, ?, ?)`
-			const values = [account.username, account.email, account.password]
-			
-			db.query(query, values, function(error, results){
-				if(error){
-					if(error.code == 'ER_DUP_ENTRY'){
-						callback(["Username is already taken"], null)
-					}
-					else{
-						console.log(error)
-						callback(['databaseError'], null)
-					}
-				}else{
-					callback([], results.insertId)
-				}
+            const accountModel = getAccountTableModel()
+            accountModel.create({username: account.username, email: account.email, password: account.password})
+            .then(function(){
+				console.log("Inserting new account to database")
+				callback([])
 			})
-		}
+			.catch(function(error){
+				if(error.parent.code == 'ER_DUP_ENTRY'){
+					console.log("Database Error, username already taken")
+					callback(["Username is already taken"], null)
+				}
+				else{
+					console.error("DATABASE ERROR: ", error);
+					callback(['DatabaseError'], null)
+				}
+            })
+        },
 	}
+}
+
+function getAccountTableModel(){
+	return sequelize.define('account', {
+		username: Sequelize.TEXT,
+		email: Sequelize.TEXT,
+		password: Sequelize.TEXT
+	})
 }
 
