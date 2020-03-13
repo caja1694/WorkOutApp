@@ -1,0 +1,6 @@
+To start everything, run the following command in this folder:
+docker-compose up --build
+
+The .vscode folder contains a configuration for debugging the
+web applicaiton in visual studio code. You might need to make
+changes to it.

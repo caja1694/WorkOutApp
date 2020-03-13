@@ -1,0 +1,32 @@
+<div class="container has-text-centered">
+    <div class="column is-4 is-offset-4">
+        
+        <h3 class="title has-text-black">Login</h3>
+        <hr class="login-hr">
+        {{#if activeUser}}
+            <p class="subtitle has-text-black">Please login to proceed.</p>  
+        {{else}}
+            <p class="subtitle has-text-black">You need to login to be able to create an article</p>
+        {{/if}}
+        <p>{{error}}</p>
+        <div class="box">
+            <form action="/accounts/sign-in" method="post">
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-large" name="username" required="required" placeholder="Username" autofocus="">
+                     </div>
+                </div>
+
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-large" type="password" required="required" name="password" placeholder="Your Password">
+                    </div>
+                </div>
+                	<button class="button is-block is-info is-large is-fullwidth">Login</button>
+            </form>
+        </div>
+            <p class="has-text-grey">
+                <a href="/accounts/sign-up">Create new account</a> &nbsp;·&nbsp;
+            </p>
+    </div>
+</div>

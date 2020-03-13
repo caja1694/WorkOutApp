@@ -1,0 +1,57 @@
+
+<section>
+    <div class="hero-body has-text-centered">
+        <h1 class="is-size-1">Welcome to <em>MuscleApp</em></h1>
+        <p>Here you can keep track of your workout progress, share your best tips and become stronger together.</p>
+    </div>
+</section>
+
+<form action="/create-article" method="get">
+<div class="buttons has-addons is-centered">
+    <p class="control">
+    <button type="submit" class="button is-link">
+        Create article
+    </button>
+</p>
+</div>
+</form>
+<!-- ******' -- >
+            <!-- Developers -->
+        <div class="section">
+            <div class="row columns is-multiline">
+              {{#each allArticles}}
+                <div class="column is-one-third has-text-centered">
+                    <div class="card large">
+                        <div class="card-image">
+                            <figure class="image">
+                                <img src="https://images.unsplash.com/photo-1475778057357-d35f37fa89dd?dpr=1&auto=compress,format&fit=crop&w=1920&h=&q=80&cs=tinysrgb&crop=" alt="Image">
+                            </figure>
+                        </div>
+                        <div class="card-content">
+                            <form action="/article/{{this.id}}" method="get">
+                            <div class="title">
+                                    <p>{{this.title}}</p>
+                            </div>
+
+                            
+                            <div class="tags has-addons level-item">
+                                <span class="tag is-rounded">Author:</span>
+                                <span class="tag is-rounded">{{username}}</span>
+                            </div>
+
+                            <div class="content">
+                                <h4>{{this.description}}</h4>
+                            </div>
+                            
+                            <button class="btn btn-outline-primary col-sm-6" type="submit" >Show Article</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+
+        
+  
+            <!-- End Developers -->
