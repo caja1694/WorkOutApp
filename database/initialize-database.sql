@@ -15,8 +15,19 @@ CREATE TABLE articles (
 	username VARCHAR(50) NOT NULL
 );
 
+CREATE TABLE workouts (
+	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	exercise VARCHAR(10) NOT NULL,
+	timeOrWeight VARCHAR(10) NOT NULL,
+	sets VARCHAR(10) NOT NULL,
+	reps VARCHAR(10) NOT NULL,
+	username VARCHAR(10) NOT NULL
+);
+
 -- Create a dummy account for testing.
 INSERT INTO accounts (username, email, password) VALUES ("Alice", "alice@gmail.com", "abc123");
+
+INSERT INTO workouts (exercise, timeOrWeight, sets, reps, username) VALUES ("Benchpress", "80 kg", "4", "10", "Alice");
 
 -- Create a dummy article for testing.
 INSERT INTO articles (title, description, content, username) VALUES ("Avoiding the Gym? Here's a Week of Free Follow-Along Workouts!", 

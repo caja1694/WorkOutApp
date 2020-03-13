@@ -11,6 +11,7 @@ const redisStore = require('connect-redis')(session)
 const awilix = require('awilix')
 const container = awilix.createContainer()
 
+
 const accountRepoFun = require('../data-access-layer/account-repository')
 const accountManagerFun = require('../business-logic-layer/account-manager')
 const accoutValidatorFun = require('../business-logic-layer/account-validator')
@@ -19,6 +20,8 @@ const variousRouterFun = require('../presentation-layer/routers/article-router')
 const myWorkoutsRouterFun = require('../presentation-layer/routers/my-workouts-router')
 const articleManagerFun = require('../business-logic-layer/article-manager')
 const articleRepFun = require('../data-access-layer/article-repository')
+const myWorkoutManagerFun = require('../business-logic-layer/myWorkout-manager')
+const myWorkoutsRepoFun = require('../data-access-layer/myWorkout-repository')
 
 container.register('articleRepo', awilix.asFunction(articleRepFun))
 container.register('articleManager', awilix.asFunction(articleManagerFun))
@@ -28,6 +31,8 @@ container.register('accountManager', awilix.asFunction(accountManagerFun))
 container.register('accountValidator', awilix.asFunction(accoutValidatorFun))
 container.register('accountRouter', awilix.asFunction(accountRouterFun))
 container.register('article-router', awilix.asFunction(variousRouterFun))
+container.register('myWorkoutManager', awilix.asFunction(myWorkoutManagerFun))
+container.register('myWorkoutRepo', awilix.asFunction(myWorkoutsRepoFun))
 const accountRouter = container.resolve('accountRouter')
 const articleRouter = container.resolve('article-router')
 const myWorkoutsRouter = container.resolve('myWorkoutsRouter')
@@ -59,8 +64,8 @@ app.engine('hbs', expressHandlebars({
 app.use(express.static(path.join(__dirname, 'public')))
 
 // Get client side js files. 
-app.get('/public/articleFeed.js', function (req, res) {
-  res.sendFile(path.join(__dirname, 'public', 'articleFeed.js'));
+app.get('/public/myWorkoutFunctions.js', function (req, res) {
+  res.sendFile(path.join(__dirname, 'public', 'myWorkoutFunctions.js'));
 });
 
 // Attach all routers.

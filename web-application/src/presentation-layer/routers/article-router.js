@@ -11,6 +11,8 @@ module.exports = function({articleManager}){
 				allArticles: articles,
 				activeUser: null
 			}
+			console.log("articles in articlerouter: ", articles);
+			
 			if(errors.length){console.log("in home errors:", errors);}
 
 			if(request.session.activeUser){

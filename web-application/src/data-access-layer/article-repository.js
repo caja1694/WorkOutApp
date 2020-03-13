@@ -28,6 +28,7 @@ module.exports = function(container){
                     console.log("in articlerepo error: ",error);
                     
 				}else{          
+					console.log("articles in repo: ", articles);
 					callback([], articles)
 				}
 			})
