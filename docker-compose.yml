@@ -9,6 +9,7 @@ services:
       - "./web-application/src:/web-application/src"
     depends_on:
       - database
+      - database2
   database:
     build: ./database
     ports:
@@ -16,6 +17,14 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=theRootPassword
       - MYSQL_DATABASE=webAppDatabase
+  database2:
+    build: ./database2
+    ports:
+      - "3307:3307"
+    environment:
+      - MYSQL_ROOT_PASSWORD=theRootPassword
+      - MYSQL_DATABASE=webAppDatabase2
+
   redis-database:
     build: redis-database
     ports: 

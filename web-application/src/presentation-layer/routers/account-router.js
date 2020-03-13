@@ -31,6 +31,7 @@ module.exports = function({accountManager}){
 				accounts: accounts,
 				activeUser: getSession(request)
 			}
+			console.log("IN ROUTER: ", model)
 			response.render("accounts-list-all.hbs", model)
 		})
 	})
@@ -68,9 +69,9 @@ module.exports = function({accountManager}){
 				response.redirect('/accounts/sign-in')
 			}
 		})
-		
 	})
-	router.post('/sign-in', function(request, response){
+	// Login
+		router.post('/sign-in', function(request, response){
 		const account = {
 			username: request.body.username,
 			password: request.body.password
@@ -78,9 +79,9 @@ module.exports = function({accountManager}){
 		accountManager.getAccountForLogin(account, function(errors){
 			if(0 < errors.length){
 				const error = {
-					error: errors[0]
+					error: errorHandler(errors[0])
 				}
-				response.render('accounts-sign-in.hbs')
+				response.render('accounts-sign-in.hbs', error)
 			}
 			else{
 				request.session.activeUser = {username: account.username}
@@ -93,6 +94,18 @@ module.exports = function({accountManager}){
 	return router
 
 }
+
+function errorHandler(errorCode){
+	let errorMessage = ""
+	switch(errorCode){
+		case "ERR_USERNAME_MISSING": errorMessage = "Wrong username or password"; break;
+		case "ERR_WRONG_PASSWORD": errorMessage = "Wrong username or password"; break;
+		case "ERR_DATABASE": errorMessage = "We hit an error with the database"; break;
+		default: errorMessage = "We hit an error loggin in"; break;
+	}
+	return errorMessage
+}
+
 function getSession(request){
 	if(request.session.activeUser){
 		return {activeUser: request.session.activeUser.username}
