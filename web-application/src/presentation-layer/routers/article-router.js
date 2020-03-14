@@ -11,7 +11,6 @@ module.exports = function({articleManager}){
 				allArticles: articles,
 				activeUser: null
 			}
-			console.log("articles in articlerouter: ", articles);
 			
 			if(errors.length){console.log("in home errors:", errors);}
 
@@ -52,8 +51,7 @@ module.exports = function({articleManager}){
 				if(model.activeUser.toLowerCase() == model.article.username.toLowerCase()){
 					model.author = true
 				}
-				console.log("user: ", model.activeUser);
-				console.log("article", model.article.username)
+
 				
 				response.render("show-article.hbs", model)
 			}

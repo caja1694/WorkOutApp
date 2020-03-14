@@ -1,7 +1,11 @@
 module.exports = function({myWorkoutRepo}){
     return{
-        getWorkouts: function(username, callback){
-            myWorkoutRepo.getWorkouts(username, callback)
+        getAllWorkouts: function(username, callback){
+            myWorkoutRepo.getAllWorkouts(username, callback)
+        },
+        getExercises: function(id, callback){
+            myWorkoutRepo.getExercises(id, callback)
         }
+
     }
 }

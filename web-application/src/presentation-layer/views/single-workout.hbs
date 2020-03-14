@@ -1,0 +1,31 @@
+<div class="columns is-multiline is-mobile">
+  <div class="column is-one-quarter">
+    <p>Exercise</p> 
+  </div>
+  <div class="column is-one-quarter">
+    <p>Time / Weight</p>
+  </div>
+  <div class="column is-one-quarter">
+    <p>Sets</p>
+  </div>
+  <div class="column is-one-quarter">
+    <p>Reps</p>
+  </div>
+  </div>
+
+{{#each exercises}}
+<div class="columns is-multiline is-mobile">
+    <div class="column is-one-quarter">
+        <p>{{this.exercise}}</p> 
+    </div>
+    <div class="column is-one-quarter">
+        <p>{{this.timeOrWeight}}</p>
+    </div>
+    <div class="column is-one-quarter">
+        <p>{{this.sets}}</p>
+    </div>
+    <div class="column is-one-quarter">
+        <p>{{this.reps}}</p>
+    </div>
+</div>
+{{/each}}

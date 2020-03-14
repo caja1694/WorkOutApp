@@ -2,7 +2,7 @@ const db = require('./db')
 
 module.exports = function(container){
     return{
-        getWorkouts: function(username, callback){
+        getWorkoutsByUsername: function(username, callback){
             const query = `SELECT * FROM workouts WHERE username = ?`
             const values = [username]
             
@@ -15,6 +15,12 @@ module.exports = function(container){
 					callback([], workouts)
 				}
             })
+        },
+
+        getWorkoutByID: function(id, callback){
+            const query = `SELECT * FROM workouts WHERE id = ?`
+            const values = [id]
+            
         }
     }
 }
