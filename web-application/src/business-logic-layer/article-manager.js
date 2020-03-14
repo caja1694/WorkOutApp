@@ -10,6 +10,10 @@ module.exports = function({articleRepo}){
         },
         getArticleById: function(id, callback){
             articleRepo.getArticleById(id, callback)
+        },
+
+        deleteArticle: function(id, callback){
+            articleRepo.deleteArticle(id, callback)
         }
 
     }

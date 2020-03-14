@@ -46,6 +46,21 @@ module.exports = function(container){
 					callback([], article[0])
 				}
 			})
+		},
+
+		deleteArticle: function(id, callback){
+			const query = `DELETE FROM articles WHERE id = ? LIMIT 1`
+			const values = [id]
+
+			db.query(query, values, function(error){
+				if(error){
+					callback(['ERR_DATABASE'])
+				}
+				else{
+					callback([""])
+				}
+			})
+
 		}
 	}
     }

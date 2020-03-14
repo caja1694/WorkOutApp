@@ -12,11 +12,26 @@
                                 <span class="tag is-rounded">Written by</span>
                                 <span class="tag is-rounded">{{article.username}}</span>
                             </div>
+                            
                         </div>
                     </div>
                     <div class="content article-body">
                         <p>{{article.content}}</p>
                     </div>
+                    {{#if author}}
+                    <form action="/deleteArticle/{{article.id}}" method="post">
+                        <div class="has-text-centered">
+                            <button class="button is-danger " type="submit">Delete Post</button>
+                        </div>
+                    </form>
+                    {{/if}}
+                    
                 </div>
             </div>
+            
+        </div>
+         
+    </section>
+   
+</div>
             <!-- END ARTICLE -->

@@ -38,7 +38,8 @@ module.exports = function({articleManager}){
 		const model = {
 			article: null,
 			error: null,
-			activeUser: getSession(request)
+			activeUser: getSession(request),
+			author: false
 		}
 
 		articleManager.getArticleById(request.params.id, function(errors, article){
@@ -48,6 +49,12 @@ module.exports = function({articleManager}){
 				response.render("show-article.hbs", model)
 			}else{
 				model.article = article
+				if(model.activeUser.toLowerCase() == model.article.username.toLowerCase()){
+					model.author = true
+				}
+				console.log("user: ", model.activeUser);
+				console.log("article", model.article.username)
+				
 				response.render("show-article.hbs", model)
 			}
 		})
@@ -87,10 +94,18 @@ module.exports = function({articleManager}){
 				response.redirect('/');
 			}
 		})
+	})
+
+	router.post('/deleteArticle/:id', function(request, response){
 		
-	
-		
-		
+		articleManager.deleteArticle(request.params.id, function(error){
+			if(0<error.length){
+				console.log("error in deletepost: ", error);
+				response.redirect('/');
+			}else{
+				response.redirect('/');
+			}
+		})
 	})
 
 	
@@ -101,7 +116,7 @@ module.exports = function({articleManager}){
 
 function getSession(request){
 	if(request.session.activeUser){
-		return {activeUser: request.session.activeUser.username}
+		return request.session.activeUser.username
 	}
 	return null
 }

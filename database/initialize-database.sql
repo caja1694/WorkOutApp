@@ -25,9 +25,9 @@ CREATE TABLE workouts (
 );
 
 -- Create a dummy account for testing.
-INSERT INTO accounts (username, email, password) VALUES ("Alice", "alice@gmail.com", "abc123");
+INSERT INTO accounts (username, email, password) VALUES ("alice", "alice@gmail.com", "abc123");
 
-INSERT INTO workouts (exercise, timeOrWeight, sets, reps, username) VALUES ("Benchpress", "80 kg", "4", "10", "Alice");
+INSERT INTO workouts (exercise, timeOrWeight, sets, reps, username) VALUES ("Benchpress", "80 kg", "4", "10", "alice");
 
 -- Create a dummy article for testing.
 INSERT INTO articles (title, description, content, username) VALUES ("Avoiding the Gym? Here's a Week of Free Follow-Along Workouts!", 
@@ -38,7 +38,7 @@ but is it enough to give you that Yes, I did something today feeling? Not by a l
 take this opportunity to explore the exploding world of online follow-along workouts. We've got you covered with seven free workouts from BodyFit Elite. Each one requires minimal 
 equipment and hits the sweet spot of cardio and strength training.
 Do them with your partner, your kids, or on your own. Just do them! And if you enjoy them, you can dig deeper into any of the full programs with a free 7-day trial of BodyFit.", 
-"Dennis");
+"dennis");
 INSERT INTO articles (title, description, content, username) VALUES ("5 Mistakes Robbing You of Gains and How to Fix Them", 
 "Try these smart course correctors to get your progress in the gym back on track.",
 "Everyone wants to build muscle, but if you want to take your physique beyond newbie gains, you need to rethink your strategy. 
@@ -55,4 +55,4 @@ increasing the metabolic demand made by your workout and stimulating more overal
 
 The question of which compound exercise to perform first is easy to answer: Prioritize the exercise you want to get strongest in. For instance, 
 if you have both a barbell bench press and a barbell shoulder press on your training menu and you're trying to develop your delts, you would start with shoulder presses.",
- "Jacob");
+ "jacob");
