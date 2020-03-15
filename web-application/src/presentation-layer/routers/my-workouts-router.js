@@ -10,21 +10,11 @@ module.exports = function({myWorkoutManager}){
             
             const model = {
                 workouts: workouts,
-                activeUser: request.session.activeUser.username
+                activeUser: request.session.activeUser.username,
+                errors: errors
             }
-            
-            
-
-            if(errors){
-                response.render('my-workouts.hbs', model)
-            }else{
-                response.render('my-workouts.hbs', model)
-            }
-
-        })
-        
-        
-        
+            response.render('my-workouts.hbs', model)
+        })       
     }),
 
     router.get('/singleWorkout/:id', function(request, response){
@@ -42,10 +32,15 @@ module.exports = function({myWorkoutManager}){
             }
             response.render('single-workout.hbs', model)
         })
+    }),
+
+    router.get('/create-workout', function(request, response){
+        response.render('create-workout.hbs')
     })
 
     return router
 }
+
 
 
 /*myWorkoutManager.getWorkouts(model.activeUser, function(errors, workouts){

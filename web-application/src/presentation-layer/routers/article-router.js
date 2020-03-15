@@ -48,8 +48,10 @@ module.exports = function({articleManager}){
 				response.render("show-article.hbs", model)
 			}else{
 				model.article = article
-				if(model.activeUser.toLowerCase() == model.article.username.toLowerCase()){
-					model.author = true
+				if(model.activeUser){
+					if(model.activeUser.toLowerCase() == model.article.username.toLowerCase()){
+						model.author = true
+					}
 				}
 
 				

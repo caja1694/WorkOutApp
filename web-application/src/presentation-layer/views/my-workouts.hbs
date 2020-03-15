@@ -1,13 +1,22 @@
-<script src="../public/myWorkoutFunctions.js"></script>
-<h1>MY WORKOUTS</h1>
-<button id="addWorkoutBtn">Add workout</button>
-<div class="container" id="newWorkoutContainer">
-</div>
 
-<div class="list is-hoverable">
-  {{#each workouts}}
-    <a class="list-item" href="/myWorkouts/singleWorkout/{{this.id}}">
-      <p>{{this.title}} <br> {{this.createdAt}}</p>
-    </a>
-  {{/each}}
+<div class="hero-body has-text-centered">
+  <h4 class="subtitle is-4">MY WORKOUTS</h4>
+  <form action="/myWorkouts/create-workout" method="get">
+    <div class="buttons has-addons is-centered">
+        <p class="control">
+          <button type="submit" class="button is-link">Add new workout</button>
+        </p>
+    </div>
+  </form>
 </div>
+  <div class="list is-hoverable">
+    {{#if errors}}
+      <p>{{errors}}</p>
+    {{else}}
+      {{#each workouts}}
+        <a class="list-item" href="/myWorkouts/singleWorkout/{{this.id}}">
+          <p>{{this.title}} <br> {{this.createdAt}}</p>
+        </a>
+      {{/each}}
+    {{/if}}
+  </div>
