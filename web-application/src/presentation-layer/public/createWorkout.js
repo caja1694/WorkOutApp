@@ -30,16 +30,19 @@ document.addEventListener("DOMContentLoaded", function(){
         var inputExercise = document.createElement("input")
         inputExercise.setAttribute("name", "exercise")
         inputExercise.setAttribute("required", "required")
+        inputExercise.setAttribute("class", "input")
 
         var inputTimeOrWeight = document.createElement("input")
         inputTimeOrWeight.setAttribute("name", "timeOrWeight")
+        inputTimeOrWeight.setAttribute("class", "input")
 
         var inputSets = document.createElement("input")
         inputSets.setAttribute("name", "sets")
+        inputSets.setAttribute("class", "input")
 
         var inputReps = document.createElement("input")
         inputReps.setAttribute("name", "reps")
-
+        inputReps.setAttribute("class", "input")
 
         newDiv1.appendChild(inputExercise)
         newDiv2.appendChild(inputTimeOrWeight)

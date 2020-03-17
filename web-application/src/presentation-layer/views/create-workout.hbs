@@ -1,9 +1,12 @@
 <script src="../public/createWorkout.js"></script>
 <div class="hero-body has-text-centered">
-  <h4 class="subtitle is-4">New exercise</h4>
+  <h4 class="subtitle is-4 has-text-white-ter">New Workout</h4>
   <div class="container" id="workoutContainer">
 <form action="/myWorkouts/createWorkout" method="post" >
-    <input class="input is-half" name="title" type="text" placeholder="Title" required="required">
+  <div class="column is-half is-offset-one-quarter">
+    <input class="input" name="title" type="text" placeholder="Title" required="required">
+  </div>
+    
 
   <div class="columns is-multiline is-mobile">
     <div class="column is-one-quarter">
@@ -24,16 +27,16 @@
 
     <div class="columns is-multiline is-mobile" id="workoutForm">
       <div class="column is-one-quarter">
-        <input required="required" type="text" name="exercise">
+        <input required="required" class="input" type="text" name="exercise">
       </div>
       <div class="column is-one-quarter">
-        <input type="text" name="timeOrWeight">
+        <input class="input" type="text" name="timeOrWeight">
       </div>
       <div class="column is-one-quarter">
-        <input type="text" name="sets">
+        <input class="input" type="text" name="sets">
       </div>
       <div class="column is-one-quarter">
-        <input type="text" name="reps">
+        <input class="input" type="text" name="reps">
       </div>
     </div>
     <div class="buttons is-centered">
