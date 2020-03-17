@@ -19,7 +19,8 @@ module.exports = function(container){
         getAllWorkouts: function(username, callback){
             const workoutmodel = getWorkoutTableModel()
             workoutmodel.findAll({
-                where: {username: username}
+                where: {username: username},
+                order: Sequelize.literal('createdAt DESC')
             })
             .then(function(workouts){
                 const workoutsToReturn = []
@@ -51,6 +52,48 @@ module.exports = function(container){
                 console.error("Error retreiving exercises from database", error)
                 callback(["ERR_DATABASE"], null)
             })
+        },
+
+        createWorkout: function(model, exercises, callback){
+            const workoutModel = getWorkoutTableModel()
+            const exerciseModel = getExerciseModel()
+            workoutModel.create({title: model.title, username: model.username})
+            .then(function(result){
+                console.log("inside repo: created wrkout", result.id);
+                const errors = []
+
+                for(let i = 0; i < exercises.length; i++){
+                    exerciseModel.create({
+                        exercise: exercises[i].exercise,  
+                        timeOrWeight: exercises[i].timeOrWeight, 
+                        sets: exercises[i].sets,
+                        reps: exercises[i].reps,
+                        workoutID: result.id
+                        })
+                        .then(function(result){
+                            console.log("hejhej från then function", result)
+                            
+                        })
+                        .catch(function(error){
+                            errors.push("ERR_DATABASE_EXERCISE")
+                            console.log("ERROR IN inner catch CREATE EXERCISEs REPO: ", error)
+                            
+                        })
+
+                }
+
+                if(0 < errors.length){
+                    callback(errors)
+                }
+                else{
+                    callback([])
+                }
+                
+            }).catch(function(error){
+                console.log("ERROR DATABASE WORKOUT", error);
+                
+                callback(["ERR_DATABASE_WORKOUT"])
+            })
         }
     }
 }
@@ -70,7 +113,8 @@ function getExerciseModel(){
         exercise: Sequelize.TEXT,
         timeOrWeight: Sequelize.TEXT,
         sets: Sequelize.TEXT,
-        reps: Sequelize.TEXT
+        reps: Sequelize.TEXT,
+        workoutID: Sequelize.INTEGER
     },{
         timestamps: false
     })

@@ -1,52 +1,46 @@
 <script src="../public/createWorkout.js"></script>
 <div class="hero-body has-text-centered">
   <h4 class="subtitle is-4">New exercise</h4>
-<div class="container" id="workoutContainer">
-    <div class="buttons has-addons is-centered">
-        <p class="control">
-          <button type="submit" id="addExerciseBtn" class="button is-link">Add exercise</button>
-        </p>
-    </div>
+  <div class="container" id="workoutContainer">
+<form action="/myWorkouts/createWorkout" method="post" >
+    <input class="input is-half" name="title" type="text" placeholder="Title" required="required">
 
-    <div class="columns is-multiline is-mobile">
-  <div class="column is-one-quarter">
-    <p>Exercise</p> 
-  </div>
-  <div class="column is-one-quarter">
-    <p>Time / Weight</p>
-  </div>
-  <div class="column is-one-quarter">
-    <p>Sets</p>
-  </div>
-  <div class="column is-one-quarter">
-    <p>Reps</p>
-  </div>
-  </div>
-
-<form action="/myWorkouts/createWorkout" method="post">
   <div class="columns is-multiline is-mobile">
-  <div class="column is-one-quarter">
-    <input type="text" name="exercise">
+    <div class="column is-one-quarter">
+      <p>Exercise</p> 
+    </div>
+    <div class="column is-one-quarter">
+      <p>Time / Weight</p>
+    </div>
+    <div class="column is-one-quarter">
+      <p>Sets</p>
+    </div>
+    <div class="column is-one-quarter">
+      <p>Reps</p>
+    </div>
   </div>
-  <div class="column is-one-quarter">
-    <input type="text" name="timeOrWeight">
-  </div>
-  <div class="column is-one-quarter">
-    <input type="text" name="sets">
-  </div>
-  <div class="column is-one-quarter">
-    <input type="text" name="reps">
-  </div>
-  </div>
-  <div class="buttons has-addons is-centered">
-      <p class="control">
-        <button type="submit" id="addWorkoutBtn" class="button is-link">Add Workout</button>
-      </p>
-  </div>
-</form>
+
   
 
-</div>
-    
+    <div class="columns is-multiline is-mobile" id="workoutForm">
+      <div class="column is-one-quarter">
+        <input required="required" type="text" name="exercise">
+      </div>
+      <div class="column is-one-quarter">
+        <input type="text" name="timeOrWeight">
+      </div>
+      <div class="column is-one-quarter">
+        <input type="text" name="sets">
+      </div>
+      <div class="column is-one-quarter">
+        <input type="text" name="reps">
+      </div>
+    </div>
+    <div class="buttons is-centered">
+      <button id="addExerciseBtn" class="button is-link">Add new exercise field</button>
+      <button type="submit" class="button is-primary">Save Workout</button>
+    </div>
+  </form>
 
+  </div>
 </div>

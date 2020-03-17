@@ -20,9 +20,9 @@ CREATE TABLE workouts (
 CREATE TABLE exercises (
 	exerciseID INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 	exercise VARCHAR(50) NOT NULL,
-	timeOrWeight VARCHAR(10) NOT NULL,
-	sets VARCHAR(10) NOT NULL,
-	reps VARCHAR(10) NOT NULL,
+	timeOrWeight VARCHAR(10),
+	sets VARCHAR(10),
+	reps VARCHAR(10),
 	workoutId INT NOT NULL
 );
 
@@ -33,7 +33,3 @@ INSERT INTO accounts (username, email, password) VALUES ("Alice", "alice@gmail.c
 
 -- Create a dummy workout for testing.
 
-INSERT INTO workouts (title, username, createdAt) VALUES ("FIRST WORKOUT FROM DB", "Alice", "20-03-14");
-INSERT INTO workouts (title, username, createdAt) VALUES ("Second WORKOUT FROM DB", "Alice", "20-03-14");
-
-INSERT INTO exercises(exercise, timeOrWeight, sets, reps, workoutId) VALUES("benchpress", "80kg", "4", "8", 1);
