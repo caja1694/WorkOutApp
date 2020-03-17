@@ -35,7 +35,23 @@ module.exports = function({myWorkoutManager}){
     }),
 
     router.get('/create-workout', function(request, response){
-        response.render('create-workout.hbs')
+        const model = {
+            activeUser: request.session.activeUser.username
+        }
+        response.render('create-workout.hbs', model)
+    })
+
+    router.post('/createWorkout', function(request,response){
+        const model = {
+            exercise: request.body.exercise,
+            timeOrWeight: request.body.timeOrWeight,
+            sets: request.body.sets,
+            reps: request.body.reps
+        }
+
+        console.log(model);
+        
+        response.redirect('/myWorkouts');
     })
 
     return router
