@@ -68,8 +68,8 @@ app.engine('hbs', expressHandlebars({
 app.use(express.static(path.join(__dirname, 'public')))
 
 // Get client side js files. 
-app.get('/public/myWorkoutFunctions.js', function (req, res) {
-  res.sendFile(path.join(__dirname, 'public', 'myWorkoutFunctions.js'));
+app.get('/public/createWorkout.js', function (req, res) {
+  res.sendFile(path.join(__dirname, 'public', 'createWorkout.js'));
 });
 
 // Attach all routers.

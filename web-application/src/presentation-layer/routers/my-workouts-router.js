@@ -20,7 +20,8 @@ module.exports = function({myWorkoutManager}){
     router.get('/singleWorkout/:id', function(request, response){
         const model = {
             exercises: null,
-            errors: null
+            errors: null,
+            activeUser: request.session.activeUser.username
         }
         myWorkoutManager.getExercises(request.params.id, function(errors, exercises){
             console.log("IN ROUTER: ", exercises)
@@ -35,7 +36,30 @@ module.exports = function({myWorkoutManager}){
     }),
 
     router.get('/create-workout', function(request, response){
-        response.render('create-workout.hbs')
+        const model = {
+            activeUser: request.session.activeUser.username
+        }
+        response.render('create-workout.hbs', model)
+    })
+
+    router.post('/createWorkout', function(request,response){
+        const exercises = {
+            exercise: request.body.exercise,
+            timeOrWeight: request.body.timeOrWeight,
+            sets: request.body.sets,
+            reps: request.body.reps,
+        }
+
+        const model = {
+            title: request.body.title,
+            username: request.session.activeUser.username
+        }
+
+        myWorkoutManager.createWorkout(model, exercises, function(error){
+            response.redirect('/myWorkouts');
+        })
+        
+        response.redirect('/myWorkouts');
     })
 
     return router

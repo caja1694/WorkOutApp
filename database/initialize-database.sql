@@ -9,9 +9,9 @@ CREATE TABLE accounts (
 
 CREATE TABLE articles (
 	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-	title VARCHAR(500) NOT NULL,
-	description VARCHAR(500) NOT NULL,
-	content VARCHAR(1600) NOT NULL,
+	title VARCHAR(100) NOT NULL,
+	description VARCHAR(250) NOT NULL,
+	content VARCHAR(5000) NOT NULL,
 	username VARCHAR(50) NOT NULL
 );
 
@@ -56,3 +56,19 @@ increasing the metabolic demand made by your workout and stimulating more overal
 The question of which compound exercise to perform first is easy to answer: Prioritize the exercise you want to get strongest in. For instance, 
 if you have both a barbell bench press and a barbell shoulder press on your training menu and you're trying to develop your delts, you would start with shoulder presses.",
  "jacob");
+
+INSERT INTO articles (title, description, content, username) VALUES(
+	"Building The Perfect Body At Home!",
+	"Ready to change your physique, but can't work out in the gym? There is no need to worry. Whatever the reason, being forced to work out outside the gym doesn't have to limit your progress. Check out this great at home workout plan.",
+	"Are you one of those people who would rather workout in the comfort of your own home rather than in a big gym? Are you too busy with work, kids or school and don't have the time to make it to the gym each day? Has the poor economy made it impossible for you to afford a gym membership? Or are you just a teen without a way to get back and forth to the gym?
+
+Regardless the reason you still can make improvements to your body with basic equipment at home. With a flat bench, a barbell, a set of adjustable dumbbells and some weight you can build muscle, burn fat and get the body you are looking for. I have laid out 3 different workout programs. Each program is created for a particular fitness level.
+
+Full Body Split Beginner Workout Program
+Perform all exercises in perfect form. If you are not sure about the form of the exercise check out the exercise guides on Bodybuilding.com. 
+Upper Lower Split Intermediate Workout Program
+The upper lower split is usually the next step after the full body split. An upper lower split offers a little more variety in exercise choice as your entire body is now broken into 2 different workouts. Perform the upper body exercises on Mondays and Thursdays and lower exercises on Tuesdays and Saturdays.
+Body Part Split Advanced Workout Program
+Finally we arrive at the body part split which is the most advance of the workout splits. Each day is dedicated to one or two muscle groups so you can put maximum energy and use plenty of variety to hit each muscle group.",
+	"Rob"
+);
