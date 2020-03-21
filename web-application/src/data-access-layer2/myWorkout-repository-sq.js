@@ -71,8 +71,7 @@ module.exports = function(container){
                         workoutID: result.id
                         })
                         .then(function(result){
-                            console.log("hejhej från then function", result)
-                            
+                            console.log("Inside then in create workout")                            
                         })
                         .catch(function(error){
                             errors.push("ERR_DATABASE_EXERCISE")
@@ -89,7 +88,8 @@ module.exports = function(container){
                     callback([])
                 }
                 
-            }).catch(function(error){
+            })
+            .catch(function(error){
                 console.log("ERROR DATABASE WORKOUT", error);
                 
                 callback(["ERR_DATABASE_WORKOUT"])

@@ -37,6 +37,7 @@ module.exports = function(container){
 					callback(["No account with that username"], null)
 				}
 				else{
+					console.log("Returning accounts[0] from database: ", accounts[0])
 					callback([], accounts[0])
 				}
 			})

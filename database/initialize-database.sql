@@ -9,25 +9,25 @@ CREATE TABLE accounts (
 
 CREATE TABLE articles (
 	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-	title VARCHAR(100) NOT NULL,
-	description VARCHAR(250) NOT NULL,
-	content VARCHAR(5000) NOT NULL,
+	title VARCHAR(250) NOT NULL,
+	description VARCHAR(500) NOT NULL,
+	content VARCHAR(8000) NOT NULL,
 	username VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE workouts (
+CREATE TABLE exercises (
 	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-	exercise VARCHAR(10) NOT NULL,
+	exercise VARCHAR(25) NOT NULL,
 	timeOrWeight VARCHAR(10) NOT NULL,
 	sets VARCHAR(10) NOT NULL,
 	reps VARCHAR(10) NOT NULL,
 	username VARCHAR(10) NOT NULL
-);
+	);
 
 -- Create a dummy account for testing.
 INSERT INTO accounts (username, email, password) VALUES ("alice", "alice@gmail.com", "abc123");
 
-INSERT INTO workouts (exercise, timeOrWeight, sets, reps, username) VALUES ("Benchpress", "80 kg", "4", "10", "alice");
+INSERT INTO exercises (exercise, timeOrWeight, sets, reps, username) VALUES ("Benchpress", "80 kg", "4", "10", "alice");
 
 -- Create a dummy article for testing.
 INSERT INTO articles (title, description, content, username) VALUES ("Avoiding the Gym? Here's a Week of Free Follow-Along Workouts!", 

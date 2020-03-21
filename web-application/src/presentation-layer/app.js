@@ -25,6 +25,8 @@ const myWorkoutManagerFun = require('../business-logic-layer/myWorkout-manager')
 const myWorkoutsRepoFun = require('../data-access-layer/myWorkout-repository')
 const myWorkoutRepoSequelize = require('../data-access-layer2/myWorkout-repository-sq')
 
+const restApiRouterFun = require('../REST-API/rest-api')
+
 container.register('article-router', awilix.asFunction(articleRouterFun))
 container.register('articleRepo', awilix.asFunction(articleRepFun))
 container.register('articleManager', awilix.asFunction(articleManagerFun))
@@ -37,9 +39,12 @@ container.register('accountRouter', awilix.asFunction(accountRouterFun))
 container.register('myWorkoutManager', awilix.asFunction(myWorkoutManagerFun))
 //container.register('myWorkoutRepo', awilix.asFunction(myWorkoutsRepoFun))
 container.register('myWorkoutRepo', awilix.asFunction(myWorkoutRepoSequelize))
+container.register('rest-api', awilix.asFunction(restApiRouterFun))
+
 const accountRouter = container.resolve('accountRouter')
 const articleRouter = container.resolve('article-router')
 const myWorkoutsRouter = container.resolve('myWorkoutsRouter')
+const restApiRouter = container.resolve('rest-api')
 
 const app = express()
 
@@ -76,6 +81,7 @@ app.get('/public/createWorkout.js', function (req, res) {
 app.use('/', articleRouter)
 app.use('/accounts', accountRouter)
 app.use('/myWorkouts', myWorkoutsRouter)
+app.use('/rest-api', restApiRouter)
 
 // Start listening for incoming HTTP requests!
 app.listen(8080, function(){

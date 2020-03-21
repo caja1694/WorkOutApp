@@ -17,6 +17,7 @@ module.exports = function({articleManager}){
 			if(request.session.activeUser){
 				model.activeUser = request.session.activeUser.username
 			}
+			console.log(model)
 			
 			response.render("home.hbs", model)
 		})

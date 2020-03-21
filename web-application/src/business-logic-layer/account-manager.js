@@ -24,13 +24,16 @@ module.exports = function({accountRepo, accountValidator}){
 
 		getAccountForLogin: function(enteredAccount, callback){
 			accountRepo.getAccountByUsername(enteredAccount.username, function(errors, accountFromDB){
-				console.log("accountmanager accountfromdb: ", accountFromDB)
 				if(0 < errors.length){
 					console.log(errors)
 					callback(errors)
 				}
 				else if(enteredAccount.password == accountFromDB.password){
-					callback([])
+					const accountModel = {
+						username: accountFromDB.username,
+						accountId: accountFromDB.id
+					}
+					callback([], accountModel)
 				}
 				else{
 					callback(["ERR_WRONG_PASSWORD"])

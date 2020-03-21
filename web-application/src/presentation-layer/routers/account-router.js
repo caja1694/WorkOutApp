@@ -76,7 +76,7 @@ module.exports = function({accountManager}){
 			username: request.body.username,
 			password: request.body.password
 		}
-		accountManager.getAccountForLogin(account, function(errors){
+		accountManager.getAccountForLogin(account, function(errors, accountFromDb){
 			if(0 < errors.length){
 				const error = {
 					error: errorHandler(errors[0])
@@ -84,7 +84,7 @@ module.exports = function({accountManager}){
 				response.render('accounts-sign-in.hbs', error)
 			}
 			else{
-				request.session.activeUser = {username: account.username}
+				request.session.activeUser = {username: accountFromDb.username, id: accountFromDb.accountId}
 				response.redirect('/')
 			}
 		})

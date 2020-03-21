@@ -3,14 +3,14 @@ const express = require('express')
 module.exports = function({myWorkoutManager}){
     const router = express.Router()
 
-    //const workouts1 = [{id: 1, title: "One", date: "2020-03-14"}, {id: 2, title: "two", date: "2020-03-14"}, {id: 3, title: "three", date: "2020-03-14"}]
     router.get('/', function(request, response){
+        const username = request.session.activeUser.username
 
-        myWorkoutManager.getAllWorkouts(request.session.activeUser.username, function(errors, workouts){
+        myWorkoutManager.getAllWorkouts(username, function(errors, workouts){
             
             const model = {
                 workouts: workouts,
-                activeUser: request.session.activeUser.username,
+                activeUser: username,
                 errors: errors
             }
             response.render('my-workouts.hbs', model)
@@ -24,7 +24,6 @@ module.exports = function({myWorkoutManager}){
             activeUser: request.session.activeUser.username
         }
         myWorkoutManager.getExercises(request.params.id, function(errors, exercises){
-            console.log("IN ROUTER: ", exercises)
             if(0 < errors.length){
                 model.errors = errors
             }
@@ -43,13 +42,30 @@ module.exports = function({myWorkoutManager}){
     })
 
     router.post('/createWorkout', function(request,response){
-        const exercises = {
-            exercise: request.body.exercise,
-            timeOrWeight: request.body.timeOrWeight,
-            sets: request.body.sets,
-            reps: request.body.reps,
+        let exercises = {
+            exercise: null,
+            timeOrWeight: null,
+            sets: null,
+            reps: null
         }
 
+        if( typeof request.body.exercise === 'string' ) {
+                exercises = {
+                exercise: [request.body.exercise],
+                timeOrWeight: [request.body.timeOrWeight],
+                sets: [request.body.sets],
+                reps: [request.body.reps]
+            }
+        }
+        else{
+                exercises = {
+                exercise: request.body.exercise,
+                timeOrWeight: request.body.timeOrWeight,
+                sets: request.body.sets,
+                reps: request.body.reps
+            }
+        }
+        
         const model = {
             title: request.body.title,
             username: request.session.activeUser.username
@@ -59,7 +75,7 @@ module.exports = function({myWorkoutManager}){
             response.redirect('/myWorkouts');
         })
         
-        response.redirect('/myWorkouts');
+        //response.redirect('/myWorkouts');
     })
 
     return router
