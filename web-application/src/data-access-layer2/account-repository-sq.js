@@ -1,5 +1,3 @@
-const db = require('../data-access-layer2/db2')
-
 const Sequelize = require('sequelize')
 const sequelize = new Sequelize('webAppDatabase2', 'root', 'theRootPassword',{
 	host: 'database2',

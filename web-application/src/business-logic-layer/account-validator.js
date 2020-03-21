@@ -7,13 +7,13 @@ module.exports = function(container){
 			let errors = []
 			// Validate username.
 			if(!account.hasOwnProperty("username")){
-				errors.push("usernameMissing")
+				errors.push("ERR_USERNAME_MISSING")
 			}else if(account.username.length < MIN_USERNAME_LENGTH){
-				errors.push("usernameTooShort")
+				errors.push("ERR_USERNAME_TO_SHORT")
 			}else if(MAX_USERNAME_LENGTH < account.username.length){
-				errors.push("usernameTooLong")
+				errors.push("ERR_USERNAME_TO_LONG")
 			}else if(account.password != account.confirmationPassword){
-				errors.push("Passwords didn't match")
+				errors.push("ERR_PASSWORD_NO_MATCH")
 			}
 			return errors
 		}

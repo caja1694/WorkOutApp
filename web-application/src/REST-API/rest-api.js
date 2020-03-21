@@ -8,13 +8,19 @@ console.log("IN REST APIx")
 module.exports = function(container){
 
 	const router = express.Router()
+	
+	router.use(function(request, response, next){
+		response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000")
+		response.setHeader("Access-Control-Allow-Methods", "*")
+		response.setHeader("Access-Control-Allow-Headers", "*")
+		response.setHeader("Access-Control-Expose-Headers", "*")
+		next()
+	})
 
 	console.log("In rest-api")
-	router.get("/articles", authorization, function(request, response){
+	router.get("/articles", function(request, response){
 		// TODO: Extracting the payload is better put in a function
 		// (preferably a middleware function).
-		console.log("Request.decoded: ", request.decoded)
-		console.log("idheader", idHeader)
 		try {
 			container.articleManager.getAllArticles(function(errors, articles){
 				if(errors.length > 0){
@@ -24,7 +30,6 @@ module.exports = function(container){
 					response.status(200).json({articles: articles})
 				}
 			})
-
 			// TODO: Better to use jwt.verify asynchronously.
 			// Use payload to implement authorization...
 			
@@ -33,26 +38,19 @@ module.exports = function(container){
 			response.status(401).end()
 			return
 		}
-		//response.status(200).json("Got to the end")
 	})
 
-	router.get('authorization', authorization, function(){
-		// Get username
-		console.log("Returning auth")
-
-	})
-
-	router.get("/pets/:id", function(request, response){
+	router.get("/articles/:id", authorization, function(request, response){
 		
 		const id = request.params.id
-		
-		petHandler.getPetById(id, function(errors, pet){
+		console.log("Request.decoded: ", request.decoded)
+		container.articleManager.getArticleById(id, function(errors, article){
 			if(0 < errors.length){
 				response.status(500).end()
-			}else if(!pet){
+			}else if(!article){
 				response.status(404).end()
 			}else{
-				response.status(200).json(pet)
+				response.status(200).json(article)
 			}
 		})
 		
@@ -109,13 +107,32 @@ module.exports = function(container){
 		})
 		
 	})
+	// Create account
+	router.post("/sign-up", function(request, response){
+		const account = {
+			username: request.body.username,
+			email: request.body.email,
+			password: request.body.password,
+			confirmationPassword: request.body.confirmationPassword
+		}
+		console.log("Sign up request, got model: ", account)
 
+		container.accountManager.createAccount(account, function(errors){
+			console.log("Creating new account")
+			if(0 < errors.length){
+				const error = errorHandler(errors[0])
+				response.status(error.statusCode).json({error: error.errorMessage})
+			}
+			else{
+				console.log("Created new account")
+				response.status(200).end()
+			}
+		})
+	})
 
-
+	// Login
 	router.post("/sign-in", function(request, response){
-
 		const grantType = request.body.grant_type
-		console.log("In /sign-in, grant_type: ", request.body.grant_type)
 		const account = {
 			username: request.body.username,
 			password: request.body.password
@@ -124,7 +141,6 @@ module.exports = function(container){
 			response.status(400).json({error: "unsupported_grant_type"})
 			return
 		}
-		
 		// TODO: Handle other type of errors as described at:
 		// https://tools.ietf.org/html/rfc6749#section-5.2
 		container.accountManager.getAccountForLogin(account, function(errors, accountFromDb){
@@ -155,10 +171,8 @@ module.exports = function(container){
 					access_token: accessToken,
 					id_token: idToken
 				})
-
 			}
 		})
-		
 	})
 	return router
 }
@@ -189,15 +203,22 @@ var authorization = function(request, response, next){
 }
 
 function errorHandler(errorCode){
-	let errorModel = {
+	let message = ""
+	let status = 500
+	let error = {
 		errorMessage: null,
 		statusCode: null
 	}
 	switch(errorCode){
-		case "ERR_USERNAME_MISSING": errorModel.errorMessage = "invalid_client"; errorModel.statusCode=400; break;
-		case "ERR_WRONG_PASSWORD": errorModel.errorMessage = "invalid_client"; errorModel.statusCode=400; break;
-		case "ERR_DATABASE": errorModel.errorMessage = "server_error"; errorModel.statusCode=500; break;
-		default: errorModel.errorMessage = "server_error"; errorModel.statusCode=500; break;
+		case "ERR_USERNAME_MISSING": message = "invalid_client"; status=400; break;
+		case "ERR_WRONG_PASSWORD": message = "invalid_client"; statuse=400; break;
+		case "ERR_DATABASE": message = "server_error"; status=500; break;
+		case "ERR_USERNAME_TO_SHORT": message = "client_error"; status=400; break;
+		case "ERR_USERNAME_TO_LONG": message = "client_error"; status=400; break;
+		case "ERR_PASSWORD_NO_MATCH": message = "client_error"; status=400; break;
+		default: message = "server_error"; status=500; break;
 	}
-	return errorModel
+	error.errorMessage = message
+	error.statusCode = status
+	return error
 }

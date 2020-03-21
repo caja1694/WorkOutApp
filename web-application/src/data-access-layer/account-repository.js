@@ -55,11 +55,11 @@ module.exports = function(container){
 			db.query(query, values, function(error, results){
 				if(error){
 					if(error.code == 'ER_DUP_ENTRY'){
-						callback(["Username is already taken"], null)
+						callback(['ERR_DUP_ENTRY'], null)
 					}
 					else{
 						console.log(error)
-						callback(['databaseError'], null)
+						callback(['ERR_DATABASE'], null)
 					}
 				}else{
 					callback([], results.insertId)

@@ -31,7 +31,6 @@ module.exports = function({accountManager}){
 				accounts: accounts,
 				activeUser: getSession(request)
 			}
-			console.log("IN ROUTER: ", model)
 			response.render("accounts-list-all.hbs", model)
 		})
 	})
@@ -61,7 +60,7 @@ module.exports = function({accountManager}){
 		accountManager.createAccount(account, function(errors){
 			if(0 < errors.length){
 				const error = {
-					error: errors[0]
+					error: errorHandler(errors[0])
 				}
 				response.render('accounts-sign-up.hbs', error)
 			}
@@ -101,6 +100,10 @@ function errorHandler(errorCode){
 		case "ERR_USERNAME_MISSING": errorMessage = "Wrong username or password"; break;
 		case "ERR_WRONG_PASSWORD": errorMessage = "Wrong username or password"; break;
 		case "ERR_DATABASE": errorMessage = "We hit an error with the database"; break;
+		case "ERR_DUP_ENTRY": errorMessage = "Username is already taken"; break;
+		case "ERR_USERNAME_TO_SHORT": errorMessage = "Username too short"; break;
+		case "ERR_USERNAME_TO_LONG": errorMessage = "Username too long"; break;
+		case "ERR_PASSWORD_NO_MATCH": errorMessage = "Passwords didn't match"; break;
 		default: errorMessage = "We hit an error loggin in"; break;
 	}
 	return errorMessage
