@@ -37,6 +37,7 @@ db
                 callback([], articlesToReturn)
             })
             .catch(function(error){
+                console.log("Error retreiving all articles: ", error)
                 callback(["ERR_DATABASE"], null)
             })
           },
@@ -75,5 +76,7 @@ db
           description: Sequelize.TEXT,
           content: Sequelize.TEXT,
           username: Sequelize.TEXT
+      },{
+          timestamps: false
       })
   }

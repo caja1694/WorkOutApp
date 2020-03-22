@@ -11,40 +11,69 @@ const redisStore = require('connect-redis')(session)
 const awilix = require('awilix')
 const container = awilix.createContainer()
 
-
-const accountRepoSequelize = require('../data-access-layer2/account-repository-sq')
-const accountRepoFun = require('../data-access-layer/account-repository')
-const accountManagerFun = require('../business-logic-layer/account-manager')
-const accoutValidatorFun = require('../business-logic-layer/account-validator')
+// Account container
+//PL
 const accountRouterFun = require('../presentation-layer/routers/account-router')
+container.register('accountRouter', awilix.asFunction(accountRouterFun))
+
+//BLL
+const accountManagerFun = require('../business-logic-layer/account-manager')
+container.register('accountManager', awilix.asFunction(accountManagerFun))
+const accoutValidatorFun = require('../business-logic-layer/account-validator')
+container.register('accountValidator', awilix.asFunction(accoutValidatorFun))
+
+// DAL
+const accountRepoSequelize = require('../data-access-layer2/account-repository-sq')
+container.register('accountRepo', awilix.asFunction(accountRepoSequelize))
+const accountRepoFun = require('../data-access-layer/account-repository')
+//container.register('accountRepo', awilix.asFunction(accountRepoFun))
+
+// Article container
+// PL
 const articleRouterFun = require('../presentation-layer/routers/article-router')
-const myWorkoutsRouterFun = require('../presentation-layer/routers/my-workouts-router')
+container.register('article-router', awilix.asFunction(articleRouterFun))
+
+// BLL
 const articleManagerFun = require('../business-logic-layer/article-manager')
+container.register('articleManager', awilix.asFunction(articleManagerFun))
+
+// DAL
+// Layer 1
 const articleRepFun = require('../data-access-layer/article-repository')
+container.register('articleRepo', awilix.asFunction(articleRepFun))
+// Layer 2
+const articleRepSequelize = require('../data-access-layer2/article-repository-sq')
+//container.register('articleRepo', awilix.asFunction(articleRepSequelize))
+
+// Workouts container
+// PL
+const myWorkoutsRouterFun = require('../presentation-layer/routers/my-workouts-router')
+container.register('myWorkoutsRouter', awilix.asFunction(myWorkoutsRouterFun))
+
+// BLL
 const myWorkoutManagerFun = require('../business-logic-layer/myWorkout-manager')
+container.register('myWorkoutManager', awilix.asFunction(myWorkoutManagerFun))
+
+
+// DAL
 const myWorkoutsRepoFun = require('../data-access-layer/myWorkout-repository')
 const myWorkoutRepoSequelize = require('../data-access-layer2/myWorkout-repository-sq')
-
-const restApiRouterFun = require('../REST-API/rest-api')
-
-container.register('article-router', awilix.asFunction(articleRouterFun))
-container.register('articleRepo', awilix.asFunction(articleRepFun))
-container.register('articleManager', awilix.asFunction(articleManagerFun))
-container.register('myWorkoutsRouter', awilix.asFunction(myWorkoutsRouterFun))
-//container.register('accountRepo', awilix.asFunction(accountRepoFun))
-container.register('accountRepo', awilix.asFunction(accountRepoSequelize))
-container.register('accountManager', awilix.asFunction(accountManagerFun))
-container.register('accountValidator', awilix.asFunction(accoutValidatorFun))
-container.register('accountRouter', awilix.asFunction(accountRouterFun))
-container.register('myWorkoutManager', awilix.asFunction(myWorkoutManagerFun))
-//container.register('myWorkoutRepo', awilix.asFunction(myWorkoutsRepoFun))
 container.register('myWorkoutRepo', awilix.asFunction(myWorkoutRepoSequelize))
+//container.register('myWorkoutRepo', awilix.asFunction(myWorkoutsRepoFun))
+
+
+// Rest-api container
+const restApiRouterFun = require('../REST-API/rest-api')
 container.register('rest-api', awilix.asFunction(restApiRouterFun))
 
-const accountRouter = container.resolve('accountRouter')
-const articleRouter = container.resolve('article-router')
+
+// Resolve
 const myWorkoutsRouter = container.resolve('myWorkoutsRouter')
 const restApiRouter = container.resolve('rest-api')
+const accountRouter = container.resolve('accountRouter')
+const articleRouter = container.resolve('article-router')
+
+
 
 const app = express()
 

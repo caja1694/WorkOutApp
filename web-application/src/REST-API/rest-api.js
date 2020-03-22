@@ -40,10 +40,9 @@ module.exports = function(container){
 		}
 	})
 
-	router.get("/articles/:id", authorization, function(request, response){
+	router.get("/articles/:id", function(request, response){
 		
 		const id = request.params.id
-		console.log("Request.decoded: ", request.decoded)
 		container.articleManager.getArticleById(id, function(errors, article){
 			if(0 < errors.length){
 				response.status(500).end()
@@ -56,52 +55,62 @@ module.exports = function(container){
 		
 	})
 
-	router.post("/pets", function(request, response){
+	router.post("/articles", function(request, response){
 		
-		const name = request.body.name
+		const article = {
+			title: request.body.title,
+			description: request.body.description,
+			content: request.body.content,
+			username: request.body.username
+		}
 		
-		petHandler.createPet(name, function(errors, id){
-			if(errors.includes("databaseError")){
+		container.articleManager.createArticle(article, function(errors, id){
+			if(errors.includes("ERR_DATABASE")){
 				response.status(500).end()
 			}else if(0 < errors.length){
 				response.status(400).json(errors)
 			}else{
-				response.setHeader("Location", "/pets/"+id)
+				response.setHeader("Location", "/articles/"+id)
 				response.status(201).end()
 			}
 		})
 		
 	})
 
-	router.put("/pets/:id", function(request, response){
-		
+	router.put("/articles/:id", function(request, response){
 		const id = request.params.id
-		const name = request.body.name
-		
-		petHandler.updatePetById(name, id, function(errors, petExists){
+		console.log(request.body)
+		const article = {
+			title: request.body.title,
+			description: request.body.description,
+			content: request.body.content,
+		}
+		console.log("Article for update: ", article)
+		container.articleManager.updateArticle(article, id, function(errors, id){
 			if(errors.includes("databaseError")){
 				response.status(500).end()
 			}else if(0 < errors.length){
 				response.status(400).json(errors)
-			}else if(!petExists){
-				response.status(404).end()
 			}else{
+				response.setHeader("Location", "/articles/")
 				response.status(204).end()
 			}
 		})
 		
 	})
 
-	router.delete("/pets/:id", function(request, response){
+	// Delete article
+	router.delete("/articles/:id", authorization, function(request, response){
 		
 		const id = request.params.id
+		console.log("Request.decoded :", request.decoded)
 		
-		petHandler.deletePetById(id, function(errors, petDidExist){
+		container.articleManager.deleteArticle(id, function(errors){
 			if(0 < errors.length){
+				console.log("error deleting article: ", error)
 				response.status(500).end()
-			}else if(!petDidExist){
-				response.status(404).end()
 			}else{
+				console.log("Article deleted")
 				response.status(204).end()
 			}
 		})
@@ -154,11 +163,10 @@ module.exports = function(container){
 				const userId = accountFromDb.accountId
 				const payload = {id: userId, "username": username}
 				const accessToken = jwt.sign(payload, serverSecret)
-				const idToken = jwt.sign({
+				const idToken = {
 					sub: userId,
 					name: username
-				}, "supersecret"
-				)
+				}
 				// TODO: Put user authorization info in the access token.
 				// TODO: Better to use jwt.sign asynchronously.
 				

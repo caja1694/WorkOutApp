@@ -15,13 +15,21 @@ CREATE TABLE articles (
 	username VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE exercises (
+CREATE TABLE workouts (
 	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	title VARCHAR(50) NOT NULL,
+	username VARCHAR(20) NOT NULL,
+	createdAt VARCHAR(50),
+	updatedAt VARCHAR(50)
+);
+
+CREATE TABLE exercises (
+	exerciseID INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 	exercise VARCHAR(25) NOT NULL,
 	timeOrWeight VARCHAR(10) NOT NULL,
 	sets VARCHAR(10) NOT NULL,
 	reps VARCHAR(10) NOT NULL,
-	username VARCHAR(10) NOT NULL
+	username VARCHAR(20) NOT NULL
 	);
 
 -- Create a dummy account for testing.

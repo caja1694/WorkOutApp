@@ -16,38 +16,88 @@ document.addEventListener("DOMContentLoaded", function(){
 			goToPage(url)
 		}
 	})
+	document.getElementById("deleteBtn").addEventListener("click", function(event){
+		event.preventDefault()
+		deleteArticle(localStorage.articleId)
+	})
+	document.getElementById("editBtn").addEventListener("click", function(event){
+		event.preventDefault()
+		goToPage("/update-article")
+	})
 	
 	// TODO: Avoid using this long lines of code.
-	document.querySelector("#create-pet-page form").addEventListener("submit", function(event){
+	document.querySelector("#create-article-page form").addEventListener("submit", function(event){
 		event.preventDefault()
 		
-		const name = document.querySelector("#create-pet-page .name").value
-		
-		const pet = {
-			name
+		const title = document.querySelector("#create-article-page .title").value
+		const description = document.querySelector("#create-article-page .description").value
+		const content = document.querySelector("#create-article-page .content").value
+		const article = {
+			title: title,
+			description: description,
+			content: content,
+			username: localStorage.activeUser
 		}
+		console.log("New article: ", article)
 		
 		// TODO: Build an SDK (e.g. a separate JS file)
 		// handling the communication with the backend.
 		fetch(
-			"http://localhost:8080/articles", {
+			"http://localhost:8080/rest-api/articles", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 					"Authorization": "Bearer "+localStorage.accessToken
 				},
-				body: JSON.stringify(pet)
+				body: JSON.stringify(article)
 			}
 		).then(function(response){
 			// TODO: Check status code to see if it succeeded. Display errors if it failed.
 			// TODO: Update the view somehow.
-			console.log(response)
+			console.log("Checking repsponse after creating new article", response.status)
+			if(response.status == 201){
+				const location = response.headers.get("Location")
+				goToPage(location)
+			}
+			else{
+				goToPage("/error-page")
+			}
+			
 		}).catch(function(error){
 			// TODO: Update the view and display error.
 			console.log(error)
+			goToPage("/error-page")
 		})
 	})
-	
+	document.querySelector("#update-article-page form").addEventListener("submit", function(event){
+		event.preventDefault()
+		const id = localStorage.articleId
+		const article = {
+			title: document.querySelector("#update-article-page .title").value,
+			description: document.querySelector("#update-article-page .description").value,
+			content: document.querySelector("#update-article-page .content").value
+		}
+		console.log("Article for update: ", article)
+
+		fetch(
+			"http://localhost:8080/rest-api/articles/"+id, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(article)
+			}
+		).then(function(response){
+			console.log("Response after updating article: ", response.headers.get("Location"))
+			const location = response.headers.get("Location")
+			goToPage(location+id)
+		}).catch(function(error){
+			console.log("Error updating article: ", error)
+		})
+	})
+
+
+
 	document.querySelector("#login-page form").addEventListener("submit", function(event){
 		event.preventDefault()
 		
@@ -77,6 +127,8 @@ document.addEventListener("DOMContentLoaded", function(){
 			}).then(function(body){
 				// TODO: Read out information about the user account from the id_token.
 				console.log("body.id_token", body.id_token)
+				localStorage.activeUser = body.id_token.name
+				console.log("localStorage.idToken: ", localStorage.activeUser)
 				login(body.access_token)
 			}).catch(function(error){
 			console.log(error)
@@ -146,20 +198,54 @@ function fetchArticle(id){
 	
 	fetch(
 		"http://localhost:8080/rest-api/articles/"+id
+
 	).then(function(response){
 		// TODO: Check status code to see if it succeeded. Display errors if it failed.
 		console.log("Status code when fetching single article: ", response.status)
 		return response.json()
 	}).then(function(article){
 		console.log("Article.title recieved from fetching article by ID: ", article.title)
+		const authorSpan = document.querySelector("#article-page .author")
 		const titleSpan = document.querySelector("#article-page .title")
 		const contentSpan = document.querySelector("#article-page .content")
+		localStorage.articleTitle = article.title
+		localStorage.articleDescription = article.description
+		localStorage.articleContent = article.content
+		if(localStorage.accessToken && localStorage.activeUser == article.username){
+			document.getElementById("deleteBtn").style.display = "block"
+			document.getElementById("editBtn").style.display = "block"
+		}
+		else{
+			document.getElementById("deleteBtn").style.display = "none"
+			document.getElementById("editBtn").style.display = "none"
+		}
+
+		authorSpan.innerText = article.username
 		titleSpan.innerText = article.title
 		contentSpan.innerText = article.content
 	}).catch(function(error){
 		console.log(error)
 	})
 	
+}
+function deleteArticle(id){
+	fetch(
+		"http://localhost:8080/rest-api/articles/"+id, {
+			method: "delete",
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": "Bearer "+localStorage.accessToken
+			},
+		}
+	).then(function(response){
+		console.log("delete article response: ", response.status)
+		goToPage("/articles")
+	}).catch(function(error){
+		console.log("error deleting article: ", error)
+	})
+}
+function updateArticle(article){
+
 }
 
 window.addEventListener("popstate", function(event){
@@ -189,6 +275,9 @@ function changeToPage(url){
 	}else if(url == "/articles"){
 		document.getElementById("articles-page").classList.add("current-page")
 		fetchAllArticles()
+	}else if(url == "/update-article"){
+		setContent()
+		document.getElementById("update-article-page").classList.add("current-page")
 	}else if(url == "/login"){
 		document.getElementById("login-page").classList.add("current-page")
 	}else if(url == "/sign-up"){
@@ -196,9 +285,11 @@ function changeToPage(url){
 	}else if(new RegExp("^/articles/[0-9]+$").test(url)){
 		document.getElementById("article-page").classList.add("current-page")
 		const id = url.split("/")[2]
+		localStorage.articleId = id
+		console.log("Fetching article: ", id)
 		fetchArticle(id)
-	}else if(url == "/create-pet"){
-		document.getElementById("create-pet-page").classList.add("current-page")
+	}else if(url == "/create"){
+		document.getElementById("create-article-page").classList.add("current-page")
 	}else if(url == "/logout"){
 		logout()
 	}else if(url == "/error-page"){
@@ -207,6 +298,12 @@ function changeToPage(url){
 		document.getElementById("error-page").classList.add("current-page")
 	}
 	
+}
+function setContent(){
+	const title = document.querySelector("#update-article-page .title")
+	title.setAttribute("value", localStorage.articleTitle)
+	document.getElementById("update-description").value = localStorage.articleDescription
+	document.getElementById("update-content").value = localStorage.articleContent
 }
 
 function login(accessToken){

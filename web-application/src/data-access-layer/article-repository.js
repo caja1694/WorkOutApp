@@ -6,14 +6,15 @@ module.exports = function(container){
 			const query = `INSERT INTO articles (title, description ,content, username) VALUES (?, ?, ?, ?)`
 			const values = [article.title, article.description ,article.content, article.username]
 			
-            db.query(query, values, function(error){
+            db.query(query, values, function(error, results){
 				if(error){
 					console.log("ERROR IN DB WHEN CREATING ARTICLE: ", error);
 					
-					callback(['databaseError'])
+					callback(['ERR_DATABASE'], null)
 				}
 				else{
-					callback([])
+					console.log("article repository: Result.id: ", results.insertId)
+					callback([], results.insertId)
 				}
 			})
         }, 
@@ -24,7 +25,7 @@ module.exports = function(container){
 			
 			db.query(query, values, function(error, articles){
 				if(error){
-                    callback(['databaseError'], null)
+                    callback(['ERR_DATABASE'], null)
                     console.log("in articlerepo error: ",error);
                     
 				}else{          
@@ -46,7 +47,23 @@ module.exports = function(container){
 				}
 			})
 		},
+		updateArticle: function(article, id, callback){
+			console.log("article in update article: ", article)
+			const query = 'UPDATE articles SET title = ?, description = ?, content = ? WHERE id = ?'
+			const values = [article.title, article.description, article.content, id]
+			
+			db.query(query, values, function(error, results){
+				if(error){
+					console.log("Error updating article: ", error)
+					callback(['ERR_DATABASE'], null)
+				}
+				else{
+					console.log("updated article with id :", results.insertId)
+					callback([], results.insertId)
+				}
 
+			})
+		},
 		deleteArticle: function(id, callback){
 			const query = `DELETE FROM articles WHERE id = ? LIMIT 1`
 			const values = [id]
@@ -56,7 +73,7 @@ module.exports = function(container){
 					callback(['ERR_DATABASE'])
 				}
 				else{
-					callback([""])
+					callback([])
 				}
 			})
 

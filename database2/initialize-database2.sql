@@ -9,10 +9,18 @@ CREATE TABLE accounts (
 	CONSTRAINT usernameUnique UNIQUE (username)
 );
 
+CREATE TABLE articles (
+	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	title VARCHAR(250) NOT NULL,
+	description VARCHAR(500) NOT NULL,
+	content VARCHAR(8000) NOT NULL,
+	username VARCHAR(50) NOT NULL
+);
+
 CREATE TABLE workouts (
 	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 	title VARCHAR(50) NOT NULL,
-	username VARCHAR(10) NOT NULL,
+	username VARCHAR(20) NOT NULL,
 	createdAt VARCHAR(50),
     updatedAt VARCHAR(50)
 );
@@ -23,7 +31,7 @@ CREATE TABLE exercises (
 	timeOrWeight VARCHAR(10),
 	sets VARCHAR(10),
 	reps VARCHAR(10),
-	workoutId INT NOT NULL
+	username VARCHAR(20)
 );
 
 
