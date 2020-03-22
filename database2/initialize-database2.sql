@@ -31,7 +31,7 @@ CREATE TABLE exercises (
 	timeOrWeight VARCHAR(10),
 	sets VARCHAR(10),
 	reps VARCHAR(10),
-	username VARCHAR(20)
+	workoutID INT NOT NULL
 );
 
 

@@ -47,7 +47,8 @@ db
                   where: {id: id}
               })
               .then(function(article){
-                callback([], article)
+                console.log(article[0])
+                callback([], article[0].dataValues)
               })
               .catch(function(error){
                   console.log("Error getting article", error)

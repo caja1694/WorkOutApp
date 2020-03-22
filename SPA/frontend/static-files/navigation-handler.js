@@ -38,10 +38,6 @@ document.addEventListener("DOMContentLoaded", function(){
 			content: content,
 			username: localStorage.activeUser
 		}
-		console.log("New article: ", article)
-		
-		// TODO: Build an SDK (e.g. a separate JS file)
-		// handling the communication with the backend.
 		fetch(
 			"http://localhost:8080/rest-api/articles", {
 				method: "POST",
@@ -52,20 +48,19 @@ document.addEventListener("DOMContentLoaded", function(){
 				body: JSON.stringify(article)
 			}
 		).then(function(response){
-			// TODO: Check status code to see if it succeeded. Display errors if it failed.
-			// TODO: Update the view somehow.
-			console.log("Checking repsponse after creating new article", response.status)
 			if(response.status == 201){
 				const location = response.headers.get("Location")
 				goToPage(location)
 			}
 			else{
+				localStorage.errorMessage = "Error creating new article"
 				goToPage("/error-page")
 			}
 			
 		}).catch(function(error){
 			// TODO: Update the view and display error.
 			console.log(error)
+			localStorage.errorMessage = error
 			goToPage("/error-page")
 		})
 	})
@@ -77,8 +72,6 @@ document.addEventListener("DOMContentLoaded", function(){
 			description: document.querySelector("#update-article-page .description").value,
 			content: document.querySelector("#update-article-page .content").value
 		}
-		console.log("Article for update: ", article)
-
 		fetch(
 			"http://localhost:8080/rest-api/articles/"+id, {
 				method: "PUT",
@@ -88,11 +81,16 @@ document.addEventListener("DOMContentLoaded", function(){
 				body: JSON.stringify(article)
 			}
 		).then(function(response){
-			console.log("Response after updating article: ", response.headers.get("Location"))
-			const location = response.headers.get("Location")
-			goToPage(location+id)
+			if(response.status == 204){
+				const location = response.headers.get("Location")
+				goToPage(location+id)
+			}
+			else {
+				localStorage.errorMessage = "error updating article"
+				goToPage("/error-page")
+			}
 		}).catch(function(error){
-			console.log("Error updating article: ", error)
+			localStorage.errorMessage = error
 		})
 	})
 
@@ -113,11 +111,12 @@ document.addEventListener("DOMContentLoaded", function(){
 				body: "grant_type=password&username="+escape(username)+"&password="+escape(password)
 			}
 			).then(function(response){
-				// TODO: Check status code to see if it succeeded. Display errors if it failed.
 				if(response.status == 500){
+					localStorage.errorMessage = "The server hit an error when trying to log in"
 					goToPage("/error-page")
 				}
 				else if(response.status == 400){
+					localStorage.errorMessage = "Wrong username or password"
 					goToPage("/error-page")
 				}
 				else{
@@ -125,10 +124,7 @@ document.addEventListener("DOMContentLoaded", function(){
 				}
 
 			}).then(function(body){
-				// TODO: Read out information about the user account from the id_token.
-				console.log("body.id_token", body.id_token)
 				localStorage.activeUser = body.id_token.name
-				console.log("localStorage.idToken: ", localStorage.activeUser)
 				login(body.access_token)
 			}).catch(function(error){
 			console.log(error)
@@ -152,17 +148,17 @@ document.addEventListener("DOMContentLoaded", function(){
 				body: "username="+escape(username)+"&email="+escape(email)+"&password="+escape(password)+"&confirmationPassword="+escape(confirmationPassword)
 			}
 		).then(function(response){
-			console.log("Response status sign-up: ", response.status)
 			if(response.status == 200){
 				return response.json
 			}
 			else{
+				localStorage.errorMessage = "Error creating account"
 				goToPage("/error-page")
 			}
 		}).then(function(body){
 			goToPage("/login")
 		}).catch(function(error){
-			console.log("Error creating new account: ", error)
+			localStorage.errorMessage = error
 		})
 	})
 	
@@ -173,11 +169,13 @@ function fetchAllArticles(){
 	fetch(
 		"http://localhost:8080/rest-api/articles"
 	).then(function(response){
-		// TODO: Check status code to see if it succeeded. Display errors if it failed.
-		console.log("STATUS CODE RECIEVED WHEN FETCHING ARTICLES: ", response.status)
-		return response.json()
+		if(response.status == 200){
+			return response.json()
+		}
+		else{
+			localStorage.errorMessage = "Error fetching articles"
+		}
 	}).then(function(articles){
-		console.log("Articles recieved from fetchallarticles: ", articles)
 		const ul = document.querySelector("#articles-page ul")
 		ul.innerText = ""
 		for(const article of articles.articles){
@@ -189,7 +187,7 @@ function fetchAllArticles(){
 			ul.append(li)
 		}
 	}).catch(function(error){
-		console.log(error)
+		localStorage.errorMessage = error
 	})
 	
 }
@@ -200,9 +198,12 @@ function fetchArticle(id){
 		"http://localhost:8080/rest-api/articles/"+id
 
 	).then(function(response){
-		// TODO: Check status code to see if it succeeded. Display errors if it failed.
-		console.log("Status code when fetching single article: ", response.status)
-		return response.json()
+		if(response.status == 200){
+			return response.json()
+		}
+		else{
+			localStorage.errorMessage = "error fetching article"
+		}
 	}).then(function(article){
 		console.log("Article.title recieved from fetching article by ID: ", article.title)
 		const authorSpan = document.querySelector("#article-page .author")
@@ -224,7 +225,7 @@ function fetchArticle(id){
 		titleSpan.innerText = article.title
 		contentSpan.innerText = article.content
 	}).catch(function(error){
-		console.log(error)
+		localStorage.errorMessage = error
 	})
 	
 }
@@ -238,14 +239,17 @@ function deleteArticle(id){
 			},
 		}
 	).then(function(response){
-		console.log("delete article response: ", response.status)
-		goToPage("/articles")
-	}).catch(function(error){
-		console.log("error deleting article: ", error)
-	})
-}
-function updateArticle(article){
 
+		if(response.status == 204){
+			goToPage("/articles")
+		}
+		else {
+			localStorage.errorMessage = "Error deleting article"
+			goToPage("/error-page")
+		}
+	}).catch(function(error){
+		localStorage.errorMessage = error
+	})
 }
 
 window.addEventListener("popstate", function(event){
@@ -265,9 +269,7 @@ function changeToPage(url){
 	if(currentPageDiv){
 		currentPageDiv.classList.remove("current-page")
 	}
-	
-	// TODO: Optimally this information can be put in an array instead of having a long list of if-else if statements.
-	// TODO: Factor out common code in all branches.
+
 	if(url == "/"){
 		document.getElementById("home-page").classList.add("current-page")
 	}else if(url == "/about"){
@@ -286,13 +288,14 @@ function changeToPage(url){
 		document.getElementById("article-page").classList.add("current-page")
 		const id = url.split("/")[2]
 		localStorage.articleId = id
-		console.log("Fetching article: ", id)
 		fetchArticle(id)
 	}else if(url == "/create"){
 		document.getElementById("create-article-page").classList.add("current-page")
 	}else if(url == "/logout"){
 		logout()
 	}else if(url == "/error-page"){
+		const errorMessage = document.getElementById("error-message")
+		errorMessage.innerText = localStorage.errorMessage
 		document.getElementById("error-page").classList.add("current-page")
 	}else{
 		document.getElementById("error-page").classList.add("current-page")
@@ -307,7 +310,6 @@ function setContent(){
 }
 
 function login(accessToken){
-	console.log("Document.body.classlist: ", document.body.classList)
 	localStorage.accessToken = accessToken
 	document.body.classList.add("isLoggedIn")
 	document.body.classList.remove("isLoggedOut")
@@ -315,8 +317,8 @@ function login(accessToken){
 }
 
 function logout(){
-	console.log("Login out")
 	localStorage.accessToken = ""
 	document.body.classList.remove("isLoggedIn")
 	document.body.classList.add("isLoggedOut")
+	goToPage('/')
 }

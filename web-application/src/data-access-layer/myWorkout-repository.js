@@ -17,10 +17,5 @@ module.exports = function(container){
             })
         },
 
-        getWorkoutByID: function(id, callback){
-            const query = `SELECT * FROM workouts WHERE id = ?`
-            const values = [id]
-            
-        }
     }
 }

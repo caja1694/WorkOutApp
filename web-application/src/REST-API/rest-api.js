@@ -3,8 +3,6 @@ const petHandler = require('./account-handler.js')
 const jwt = require('jsonwebtoken')
 const serverSecret = "sdfkjdslkfjslkfd"
 
-console.log("IN REST APIx")
-
 module.exports = function(container){
 
 	const router = express.Router()
@@ -17,10 +15,7 @@ module.exports = function(container){
 		next()
 	})
 
-	console.log("In rest-api")
 	router.get("/articles", function(request, response){
-		// TODO: Extracting the payload is better put in a function
-		// (preferably a middleware function).
 		try {
 			container.articleManager.getAllArticles(function(errors, articles){
 				if(errors.length > 0){
@@ -29,10 +24,7 @@ module.exports = function(container){
 				else{
 					response.status(200).json({articles: articles})
 				}
-			})
-			// TODO: Better to use jwt.verify asynchronously.
-			// Use payload to implement authorization...
-			
+			})		
 		}catch(e){
 			console.log("In /myworkouts got error: ", e)
 			response.status(401).end()
@@ -79,13 +71,11 @@ module.exports = function(container){
 
 	router.put("/articles/:id", function(request, response){
 		const id = request.params.id
-		console.log(request.body)
 		const article = {
 			title: request.body.title,
 			description: request.body.description,
 			content: request.body.content,
 		}
-		console.log("Article for update: ", article)
 		container.articleManager.updateArticle(article, id, function(errors, id){
 			if(errors.includes("databaseError")){
 				response.status(500).end()
@@ -150,8 +140,6 @@ module.exports = function(container){
 			response.status(400).json({error: "unsupported_grant_type"})
 			return
 		}
-		// TODO: Handle other type of errors as described at:
-		// https://tools.ietf.org/html/rfc6749#section-5.2
 		container.accountManager.getAccountForLogin(account, function(errors, accountFromDb){
 			console.log("In API: ", accountFromDb)
 			if(0 < errors.length){
@@ -167,13 +155,6 @@ module.exports = function(container){
 					sub: userId,
 					name: username
 				}
-				// TODO: Put user authorization info in the access token.
-				// TODO: Better to use jwt.sign asynchronously.
-				
-				// TODO: Put user info in the id token.
-				// Try to use the standard claims:
-				// https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
-
 				console.log("Sending idToken: ", payload)
 				response.status(200).json({
 					access_token: accessToken,

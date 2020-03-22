@@ -39,11 +39,11 @@ container.register('articleManager', awilix.asFunction(articleManagerFun))
 
 // DAL
 // Layer 1
-const articleRepFun = require('../data-access-layer/article-repository')
-container.register('articleRepo', awilix.asFunction(articleRepFun))
+//const articleRepFun = require('../data-access-layer/article-repository')
+//container.register('articleRepo', awilix.asFunction(articleRepFun))
 // Layer 2
 const articleRepSequelize = require('../data-access-layer2/article-repository-sq')
-//container.register('articleRepo', awilix.asFunction(articleRepSequelize))
+container.register('articleRepo', awilix.asFunction(articleRepSequelize))
 
 // Workouts container
 // PL

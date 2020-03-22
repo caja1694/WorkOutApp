@@ -29,7 +29,7 @@ CREATE TABLE exercises (
 	timeOrWeight VARCHAR(10) NOT NULL,
 	sets VARCHAR(10) NOT NULL,
 	reps VARCHAR(10) NOT NULL,
-	username VARCHAR(20) NOT NULL
+	workoutID INT NOT NULL
 	);
 
 -- Create a dummy account for testing.

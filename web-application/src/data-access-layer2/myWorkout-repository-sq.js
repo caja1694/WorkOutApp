@@ -119,24 +119,3 @@ function getExerciseModel(){
         timestamps: false
     })
 }
-/*
-function createWorkOutTable(){
-    const 
-}
-
-function createExerciseTable(){
-    const workoutTable = getWorkoutTableModel()
-    const exercises = sequelize.define('exercise', {
-        id: {
-           type: Sequelize.INTEGER,
-           primaryKey: true,
-           autoIncrement: true,
-           unsigned: true
-        },
-        name: Sequelize.TEXT,
-        intensity: Sequelize.TEXT,
-        sets: Sequelize.TEXT,
-        reps: Sequelize.TEXT
-    })
-    exercises.sync()
-}*/
