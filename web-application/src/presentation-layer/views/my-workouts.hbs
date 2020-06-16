@@ -1,28 +1,26 @@
-
 <div class="hero-body has-text-centered ">
   <h4 class="subtitle is-4 has-text-white-ter">MY WORKOUTS</h4>
   <form action="/myWorkouts/create-workout" method="get">
     <div class="buttons has-addons is-centered">
-        <p class="control">
-          <button type="submit" class="button is-link">Add new workout</button>
-        </p>
+      <p class="control">
+        <button type="submit" class="button is-link">Add new workout</button>
+      </p>
     </div>
   </form>
 </div>
 
 <div class="column is-half is-offset-one-quarter">
-  
-<div class="list is-hoverable">
+
+  <div class="list is-hoverable">
     {{#if errors}}
-      <p>{{errors}}</p>
+    <p>{{errors}}</p>
     {{else}}
-      {{#each workouts}}
-        <a class="list-item" href="/myWorkouts/singleWorkout/{{this.id}}">
-           <p class="title is-5">{{this.title}}</p>
-           <p class="subtitle is-6">{{this.createdAt}}</p>
-       </a>   
-     {{/each}}
-   {{/if}}
+    {{#each workouts}}
+    <a class="list-item" href="/myWorkouts/singleWorkout/{{this.id}}">
+      <p class="title is-5">{{this.title}}</p>
+      <p class="subtitle is-6">{{this.createdAt}}</p>
+    </a>
+    {{/each}}
+    {{/if}}
+  </div>
 </div>
-</div>
-  

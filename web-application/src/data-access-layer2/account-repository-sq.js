@@ -18,10 +18,10 @@ sequelize
 module.exports = function (container) {
   return {
     /*
-		Retrieves all accounts ordered by username.
-		Possible errors: databaseError
-		Success value: The fetched accounts in an array.
-        */
+      Retrieves all accounts ordered by username.
+      Possible errors: databaseError
+      Success value: The fetched accounts in an array.
+    */
     getAllAccounts: function (callback) {
       const accountModel = getAccountTableModel();
       accountModel
@@ -34,14 +34,14 @@ module.exports = function (container) {
           callback([], accountsToReturn);
         })
         .catch(function (error) {
-          callback(['databaseError'], null);
+          callback(['ERR_DATABASE'], null);
         });
     },
 
     /*
-		Retrieves the account with the given username.
-		Possible errors: databaseError
-		Success value: The fetched account, or null if no account has that username.
+      Retrieves the account with the given username.
+      Possible errors: databaseError
+      Success value: The fetched account, or null if no account has that username.
 		*/
     getAccountByUsername: function (username, callback) {
       const accountModel = getAccountTableModel();
@@ -61,10 +61,10 @@ module.exports = function (container) {
         });
     },
     /*
-		Creates a new account.
-		account: {username: "The username", password: "The password"}
-		Possible errors: databaseError, usernameTaken
-		Success value: The id of the new account.
+      Creates a new account.
+      account: {username: "The username", password: "The password"}
+      Possible errors: databaseError, usernameTaken
+      Success value: The id of the new account.
 		*/
     createAccount: function (account, callback) {
       const accountModel = getAccountTableModel();

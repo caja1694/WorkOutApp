@@ -105,7 +105,6 @@ module.exports = function ({ articleManager }) {
       }
     });
   });
-
   return router;
 };
 

@@ -72,20 +72,7 @@ module.exports = function ({ myWorkoutManager }) {
     myWorkoutManager.createWorkout(model, exercises, function (error) {
       response.redirect('/myWorkouts');
     });
-
-    //response.redirect('/myWorkouts');
   });
 
   return router;
 };
-
-/*myWorkoutManager.getWorkouts(model.activeUser, function(errors, workouts){
-    if(0 < errors.length){
-        console.log("Erorr when retrieving workouts: ", errors);
-        response.render('my-workouts.hbs', model)
-    }
-    else{
-        model.workouts = workouts;
-        response.render('my-workouts.hbs', model)
-    }
-})*/

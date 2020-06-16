@@ -1,33 +1,33 @@
 <div class="box has-background-dark has-text-white-ter">
-<div class="columns is-multiline is-mobile subtitle is-5 has-text-white-ter">
-  <div class="column is-one-quarter">
-    <p>Exercise</p> 
-  </div>
-  <div class="column is-one-quarter">
-    <p>Time / Weight</p>
-  </div>
-  <div class="column is-one-quarter">
-    <p>Sets</p>
-  </div>
-  <div class="column is-one-quarter">
-    <p>Reps</p>
-  </div>
+  <div class="columns is-multiline is-mobile subtitle is-5 has-text-white-ter">
+    <div class="column is-one-quarter">
+      <p>Exercise</p>
+    </div>
+    <div class="column is-one-quarter">
+      <p>Time / Weight</p>
+    </div>
+    <div class="column is-one-quarter">
+      <p>Sets</p>
+    </div>
+    <div class="column is-one-quarter">
+      <p>Reps</p>
+    </div>
   </div>
 
-{{#each exercises}}
-<div class="columns is-multiline is-mobile">
+  {{#each exercises}}
+  <div class="columns is-multiline is-mobile">
     <div class="column is-one-quarter">
-        <p>{{this.exercise}}</p> 
+      <p>{{this.exercise}}</p>
     </div>
     <div class="column is-one-quarter">
-        <p>{{this.timeOrWeight}}</p>
+      <p>{{this.timeOrWeight}}</p>
     </div>
     <div class="column is-one-quarter">
-        <p>{{this.sets}}</p>
+      <p>{{this.sets}}</p>
     </div>
     <div class="column is-one-quarter">
-        <p>{{this.reps}}</p>
+      <p>{{this.reps}}</p>
     </div>
-</div>
-{{/each}}
+  </div>
+  {{/each}}
 </div>

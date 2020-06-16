@@ -53,7 +53,8 @@ module.exports = function (container) {
           const q =
             'INSERT INTO exercises (exercise, timeOrWeight, sets, reps, workoutID) VALUES (?, ?, ?, ?, ?)';
           const workoutID = result.id;
-          for (exercise in exercises) {
+          for (let i = 0; i < exercises.length; i++) {
+            var exercise = exercises[i];
             var vals = [
               exercise.exercise,
               exercise.timeOrWeigth,
@@ -65,6 +66,8 @@ module.exports = function (container) {
               if (error) {
                 console.log('Error 2');
                 callback(['ERR_DATABASE_EXERCISE']);
+              } else if (i == exercises.length - 1) {
+                callback([]);
               }
             });
           }

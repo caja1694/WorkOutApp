@@ -13,7 +13,7 @@ module.exports = function (container) {
 
       db.query(query, values, function (error, accounts) {
         if (error) {
-          callback(['databaseError'], null);
+          callback(['ERR_DATABASE'], null);
         } else {
           callback([], accounts);
         }

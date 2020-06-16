@@ -1,31 +1,31 @@
 version: '3'
 services:
-  "web-application":
-    build: "./web-application"
+  'web-application':
+    build: './web-application'
     ports:
-      - "8080:8080"
-      - "9229:9229"
+      - '8080:8080'
+      - '9229:9229'
     volumes:
-      - "./web-application/src:/web-application/src"
+      - './web-application/src:/web-application/src'
     depends_on:
       - database
       - database2
   database:
     build: ./database
     ports:
-      - "3306:3306"
+      - '3306:3306'
     environment:
       - MYSQL_ROOT_PASSWORD=theRootPassword
       - MYSQL_DATABASE=webAppDatabase
   database2:
     build: ./database2
     ports:
-      - "3307:3307"
+      - '3307:3307'
     environment:
       - MYSQL_ROOT_PASSWORD=theRootPassword
       - MYSQL_DATABASE=webAppDatabase2
 
   redis-database:
     build: redis-database
-    ports: 
-      - "6379:6379"
+    ports:
+      - '6379:6379'

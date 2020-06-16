@@ -74,7 +74,6 @@ module.exports = function (container) {
         .create({ title: model.title, username: model.username })
         .then(function (result) {
           console.log('inside repo: created wrkout', result.id);
-          const errors = [];
 
           for (let i = 0; i < exercises.length; i++) {
             exerciseModel
@@ -86,21 +85,23 @@ module.exports = function (container) {
                 workoutID: result.id,
               })
               .then(function (result) {
-                console.log('Inside then in create workout');
+                if (i == exercises.length - 1) {
+                  callback([]);
+                }
               })
               .catch(function (error) {
-                errors.push('ERR_DATABASE_EXERCISE');
                 console.log(
                   'ERROR IN inner catch CREATE EXERCISEs REPO: ',
                   error
                 );
+                if (error) {
+                  callback('ERR_DATABASE_EXERCISE');
+                }
               });
           }
-          callback(errors);
         })
         .catch(function (error) {
           console.log('ERROR DATABASE WORKOUT', error);
-
           callback(['ERR_DATABASE_WORKOUT']);
         });
     },
