@@ -3,7 +3,7 @@ CREATE TABLE accounts (
 	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 	username VARCHAR(50) NOT NULL,
 	email VARCHAR(50) NOT NULL,
-	password VARCHAR(30) NOT NULL,
+	password VARCHAR(128) NOT NULL,
     createdAt VARCHAR(50),
     updatedAt VARCHAR(50),
 	CONSTRAINT usernameUnique UNIQUE (username)

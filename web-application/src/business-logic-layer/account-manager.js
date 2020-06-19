@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+
 module.exports = function ({ accountRepo, accountValidator }) {
   return {
     getAllAccounts: function (callback) {
@@ -8,6 +10,8 @@ module.exports = function ({ accountRepo, accountValidator }) {
       if (0 < errors.length) {
         callback(errors, null);
         return;
+      } else {
+        account.password = getHash(account.password);
       }
       accountRepo.createAccount(account, callback);
     },
@@ -16,13 +20,14 @@ module.exports = function ({ accountRepo, accountValidator }) {
     },
 
     getAccountForLogin: function (enteredAccount, callback) {
+      const checkPass = getHash(enteredAccount.password);
       accountRepo.getAccountByUsername(enteredAccount.username, function (
         errors,
         accountFromDB
       ) {
         if (0 < errors.length) {
           callback(errors);
-        } else if (enteredAccount.password == accountFromDB.password) {
+        } else if (checkPass == accountFromDB.password) {
           const accountModel = {
             username: accountFromDB.username,
             accountId: accountFromDB.id,
@@ -35,3 +40,12 @@ module.exports = function ({ accountRepo, accountValidator }) {
     },
   };
 };
+
+function getHash(value) {
+  const alg = 'sha256';
+  const hash = crypto
+    .createHmac(alg, value)
+    .update('I love cupcakes')
+    .digest('hex');
+  return hash;
+}

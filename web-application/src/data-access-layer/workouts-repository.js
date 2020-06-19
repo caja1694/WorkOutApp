@@ -1,5 +1,11 @@
 const db = require('./db');
 
+db.connect(function (error) {
+  if (error) {
+    console.log('Connection error in workouts repo');
+  } else console.log('Connected to db in workouts repo');
+});
+
 module.exports = function (container) {
   return {
     /*
@@ -25,13 +31,15 @@ module.exports = function (container) {
         Sucess value: An array with the exercises
     */
     getExercises: function (id, callback) {
-      const query = 'SELECT * FROM exercises WHERE id = ?';
+      const query = 'SELECT * FROM exercises WHERE workoutID = ?';
       const values = [id];
-
+      console.log('Getting exercises');
       db.query(query, values, function (error, exercises) {
         if (error) {
+          console.log('error getting: ', error);
           callback(['ERR_DATABASE'], null);
         } else {
+          console.log('got exercises: ', exercises);
           callback([], exercises);
         }
       });
@@ -43,8 +51,11 @@ module.exports = function (container) {
         Success value: The stored workout
     */
     createWorkout: function (model, exercises, callback) {
-      const query = 'INSERT INTO workouts (title, username) VALUES (?, ?)';
-      const values = [model.title, model.username];
+      const query =
+        'INSERT INTO workouts (title, username, createdAt) VALUES (?, ?, ?)';
+      const createdAt = getCurrentDateTime();
+      const values = [model.title, model.username, createdAt];
+
       db.query(query, values, function (error, result) {
         if (error) {
           console.log('ErROR 1', error);
@@ -52,19 +63,19 @@ module.exports = function (container) {
         } else {
           const q =
             'INSERT INTO exercises (exercise, timeOrWeight, sets, reps, workoutID) VALUES (?, ?, ?, ?, ?)';
-          const workoutID = result.id;
+          const workoutID = result.insertId;
           for (let i = 0; i < exercises.length; i++) {
             var exercise = exercises[i];
             var vals = [
               exercise.exercise,
-              exercise.timeOrWeigth,
+              exercise.timeOrWeight,
               exercise.sets,
               exercise.reps,
               workoutID,
             ];
             db.query(q, vals, function (error) {
               if (error) {
-                console.log('Error 2');
+                console.log('Error 2', error);
                 callback(['ERR_DATABASE_EXERCISE']);
               } else if (i == exercises.length - 1) {
                 callback([]);
@@ -76,3 +87,17 @@ module.exports = function (container) {
     },
   };
 };
+
+function getCurrentDateTime() {
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2, '0');
+  var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  var yyyy = today.getFullYear();
+
+  var ss = String(today.getSeconds()).padStart(2, '0');
+  var min = String(today.getMinutes()).padStart(2, '0');
+  var hh = String(today.getHours() + 2).padStart(2, '0');
+
+  today = yyyy + '-' + mm + '-' + dd + ' ' + hh + ':' + min + ':' + ss;
+  return today;
+}

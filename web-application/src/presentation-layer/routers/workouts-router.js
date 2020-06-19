@@ -42,10 +42,10 @@ module.exports = function ({ myWorkoutManager }) {
 
   router.post('/createWorkout', function (request, response) {
     let exercises = {
-      exercise: null,
-      timeOrWeight: null,
-      sets: null,
-      reps: null,
+      exercise: '',
+      timeOrWeight: '',
+      sets: '',
+      reps: '',
     };
 
     if (typeof request.body.exercise === 'string') {
@@ -56,6 +56,7 @@ module.exports = function ({ myWorkoutManager }) {
         reps: [request.body.reps],
       };
     } else {
+      console.log('In else, r.body: ', request.body);
       exercises = {
         exercise: request.body.exercise,
         timeOrWeight: request.body.timeOrWeight,

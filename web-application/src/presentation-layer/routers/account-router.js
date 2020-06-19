@@ -1,4 +1,5 @@
 const express = require('express');
+const crypto = require('crypto');
 
 module.exports = function ({ accountManager }) {
   const router = express.Router();
@@ -118,6 +119,8 @@ function errorHandler(errorCode) {
     case 'ERR_PASSWORD_NO_MATCH':
       errorMessage = "Passwords didn't match";
       break;
+    case 'ERR_AUTH':
+      errorMessage = 'You are not authorized to do that';
     default:
       errorMessage = 'We hit an error loggin in';
       break;

@@ -1,5 +1,11 @@
 const db = require('./db');
 
+db.connect(function (error) {
+  if (error) {
+    console.log('Connection error in article repo');
+  } else console.log('Connected to db in article repo');
+});
+
 module.exports = function (container) {
   return {
     /* 
