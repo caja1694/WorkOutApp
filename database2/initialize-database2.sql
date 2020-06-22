@@ -34,10 +34,8 @@ CREATE TABLE exercises (
 	workoutID INT NOT NULL
 );
 
-
-
--- Create a dummy account for testing.
-INSERT INTO accounts (username, email, password) VALUES ("Alice", "alice@gmail.com", "abc123");
-
--- Create a dummy workout for testing.
+CREATE TABLE tokens ( 
+	token VARCHAR(255) NOT NULL,
+	userId INT UNSIGNED
+);
 

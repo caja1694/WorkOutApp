@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 
-module.exports = function ({ accountRepo, accountValidator }) {
+module.exports = function ({ accountRepo, accountValidator, tokenRepo }) {
   return {
     getAllAccounts: function (callback) {
       accountRepo.getAllAccounts(callback);
@@ -38,8 +38,36 @@ module.exports = function ({ accountRepo, accountValidator }) {
         }
       });
     },
+    getAccessToken: function (enteredAccount, callback) {
+      // Authorizing account for access token
+      this.getAccountForLogin(enteredAccount, function (errors, account) {
+        if (0 < errors.length) {
+          console.log('Error in account-manager: ', errors);
+          callback(errors);
+        } else {
+          console.log('Creating access token, got account: ', account);
+          const tokenVal = generateToken();
+          const token = {
+            token: tokenVal,
+            userId: account.accountId,
+          };
+          tokenRepo.storeToken(token, callback);
+        }
+      });
+    },
   };
 };
+function generateToken() {
+  var result = '';
+  var characters =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var tokenLength = 5;
+  for (var i = 0; i < tokenLength; i++) {
+    result += characters.charAt(Math.floor(Math.random() * tokenLength));
+  }
+  result = getHash(result);
+  return result;
+}
 
 function getHash(value) {
   const alg = 'sha256';

@@ -57,6 +57,7 @@ module.exports = function (container) {
           }
         })
         .catch(function (error) {
+          console.log('Error getting account: ', error);
           callback(['ERR_DATABASE'], null);
         });
     },

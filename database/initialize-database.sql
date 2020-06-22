@@ -31,8 +31,7 @@ CREATE TABLE exercises (
 	reps VARCHAR(10) NOT NULL,
 	workoutID INT NOT NULL
 	);
-
--- Create a dummy account for testing.
-INSERT INTO accounts (username, email, password) VALUES ("alice", "alice@gmail.com", "abc123");
-
-INSERT INTO exercises (exercise, timeOrWeight, sets, reps, username) VALUES ("Benchpress", "80 kg", "4", "10", "alice");
+CREATE TABLE tokens (
+	token VARCHAR(255) NOT NULL,
+	userId INT UNSIGNED
+);

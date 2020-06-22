@@ -1,16 +1,16 @@
 const express = require('express');
-const petHandler = require('./account-handler.js');
-const jwt = require('jsonwebtoken');
-const serverSecret = 'sdfkjdslkfjslkfd';
 
 module.exports = function (container) {
   const router = express.Router();
 
   router.use(function (request, response, next) {
     response.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-    response.setHeader('Access-Control-Allow-Methods', '*');
-    response.setHeader('Access-Control-Allow-Headers', '*');
-    response.setHeader('Access-Control-Expose-Headers', '*');
+    response.setHeader('Access-Control-Allow-Methods', 'http://localhost:3000');
+    response.setHeader('Access-Control-Allow-Headers', 'http://localhost:3000');
+    response.setHeader(
+      'Access-Control-Expose-Headers',
+      'http://localhost:3000'
+    );
     next();
   });
 
@@ -43,6 +43,7 @@ module.exports = function (container) {
     });
   });
 
+  // Create article
   router.post('/articles', function (request, response) {
     const article = {
       title: request.body.title,
@@ -51,18 +52,25 @@ module.exports = function (container) {
       username: request.body.username,
     };
 
-    container.articleManager.createArticle(article, function (errors, id) {
+    container.articleManager.createArticle(article, function (errors, article) {
+      console.log('Article received from DLL to rest-api: ', article);
+      const id = article.id;
+
       if (errors.includes('ERR_DATABASE')) {
+        console.log('Error 500 in create article');
         response.status(500).end();
       } else if (0 < errors.length) {
+        console.log('Error 400 in create article');
         response.status(400).json(errors);
       } else {
+        console.log('Created article -> Redirecting to /articles/id', id);
         response.setHeader('Location', '/articles/' + id);
         response.status(201).end();
       }
     });
   });
 
+  // Update article
   router.put('/articles/:id', function (request, response) {
     const id = request.params.id;
     const article = {
@@ -83,13 +91,13 @@ module.exports = function (container) {
   });
 
   // Delete article
-  router.delete('/articles/:id', authorization, function (request, response) {
+  router.delete('/articles/:id', function (request, response) {
     const id = request.params.id;
     console.log('Request.decoded :', request.decoded);
 
     container.articleManager.deleteArticle(id, function (errors) {
       if (0 < errors.length) {
-        console.log('error deleting article: ', error);
+        console.log('error deleting article: ', errors);
         response.status(500).end();
       } else {
         console.log('Article deleted');
@@ -127,61 +135,28 @@ module.exports = function (container) {
       password: request.body.password,
     };
     if (grantType != 'password') {
+      console.log('REST-API: error GrantType not password');
       response.status(400).json({ error: 'unsupported_grant_type' });
       return;
     }
-    container.accountManager.getAccountForLogin(account, function (
+
+    container.accountManager.getAccessToken(account, function (
       errors,
-      accountFromDb
+      accessToken
     ) {
-      console.log('In API: ', accountFromDb);
       if (0 < errors.length) {
         const error = errorHandler(errors[0]);
+        console.log('Error getting accesstoken in rest-api: ', errors[0]);
         response.status(error.statusCode).json({ error: error.errorMessage });
       } else {
-        const username = accountFromDb.username;
-        const userId = accountFromDb.accountId;
-        const payload = { id: userId, username: username };
-        const accessToken = jwt.sign(payload, serverSecret);
-        const idToken = {
-          sub: userId,
-          name: username,
-        };
-        console.log('Sending idToken: ', payload);
+        console.log('REST_API Responding with accessToken', accessToken);
         response.status(200).json({
           access_token: accessToken,
-          id_token: idToken,
         });
       }
     });
   });
   return router;
-};
-
-var authorization = function (request, response, next) {
-  try {
-    console.log('Trying to authorize');
-    const authorizationHeader = request.get('authorization');
-    const accessToken = authorizationHeader.substr('Bearer '.length);
-
-    const payload = jwt.verify(accessToken, serverSecret, function (
-      error,
-      decoded
-    ) {
-      if (error) {
-        console.log('In try/if, got error: ', error);
-        response.status(401).end();
-      } else {
-        console.log('In try/else decoded: ', decoded);
-        request.decoded = decoded;
-        next();
-      }
-    });
-  } catch (error) {
-    console.log('In catch, error: ', error);
-    response.status(400).end();
-    return;
-  }
 };
 
 function errorHandler(errorCode) {
@@ -216,6 +191,9 @@ function errorHandler(errorCode) {
       message = 'client_error';
       status = 400;
       break;
+    case 'ERR_NOT_AUTHORIZED':
+      message = 'unauthorized_client';
+      status = 400;
     default:
       message = 'server_error';
       status = 500;

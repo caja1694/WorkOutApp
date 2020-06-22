@@ -30,11 +30,11 @@ module.exports = function () {
           content: article.content,
           username: article.username,
         })
-        .then(function () {
-          callback([]);
+        .then(function (result) {
+          callback([], result);
         })
         .catch(function (error) {
-          callback(['ERR_DATABASE']);
+          callback(['ERR_DATABASE'], null);
         });
     },
     /*
@@ -87,9 +87,32 @@ module.exports = function () {
           where: { id: id },
         })
         .then(function () {
-          callback(['']);
+          callback([]);
         })
         .catch(function (error) {
+          callback(['ERR_DATABASE']);
+        });
+    },
+
+    updateArticle: function (article, articleId, callback) {
+      const articleModel = getArticleTableModel();
+      articleModel
+        .update(
+          {
+            title: article.title,
+            description: article.description,
+            content: article.content,
+          },
+          {
+            where: { id: articleId },
+          }
+        )
+        .then(function () {
+          console.log('In article repo: successfully updated article');
+          callback([]);
+        })
+        .catch(function (error) {
+          console.log('In articlerepo, error updating article repo: ', error);
           callback(['ERR_DATABASE']);
         });
     },

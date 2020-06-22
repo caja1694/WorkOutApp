@@ -48,20 +48,21 @@ const articleRepSequelize = require('../data-access-layer2/article-repository-sq
 // PL
 const myWorkoutsRouterFun = require('../presentation-layer/routers/workouts-router');
 container.register('myWorkoutsRouter', awilix.asFunction(myWorkoutsRouterFun));
-
 // BLL
 const myWorkoutManagerFun = require('../business-logic-layer/workouts-manager');
 container.register('myWorkoutManager', awilix.asFunction(myWorkoutManagerFun));
-
 // DAL
 // Layer 1
 const myWorkoutsRepoFun = require('../data-access-layer/workouts-repository');
 // Layer 2
 const myWorkoutRepoSequelize = require('../data-access-layer2/workouts-repository-sq');
-
 // Rest-api container
 const restApiRouterFun = require('../REST-API/rest-api');
 container.register('rest-api', awilix.asFunction(restApiRouterFun));
+
+// Tokens
+const tokenRepoFun = require('../data-access-layer/token-repository');
+const tokenRepoSequelize = require('../data-access-layer2/token-repository-sq');
 
 // AddLayer1 or 2 to add the wanted dependecies
 addLayer2(container);
@@ -76,6 +77,7 @@ function addLayer1(container) {
   container.register('accountRepo', awilix.asFunction(accountRepoFun));
   container.register('myWorkoutRepo', awilix.asFunction(myWorkoutsRepoFun));
   container.register('articleRepo', awilix.asFunction(articleRepFun));
+  container.register('tokenRepo', awilix.asFunction(tokenRepoFun));
 }
 
 function addLayer2(container) {
@@ -85,6 +87,7 @@ function addLayer2(container) {
     'myWorkoutRepo',
     awilix.asFunction(myWorkoutRepoSequelize)
   );
+  container.register('tokenRepo', awilix.asFunction(tokenRepoSequelize));
 }
 
 const app = express();
