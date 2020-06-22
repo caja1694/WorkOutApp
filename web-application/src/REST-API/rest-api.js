@@ -173,7 +173,7 @@ function errorHandler(errorCode) {
       break;
     case 'ERR_WRONG_PASSWORD':
       message = 'invalid_client';
-      statuse = 400;
+      status = 400;
       break;
     case 'ERR_DATABASE':
       message = 'server_error';

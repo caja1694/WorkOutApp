@@ -137,20 +137,16 @@ document.addEventListener('DOMContentLoaded', function () {
             localStorage.errorMessage = 'Wrong username or password';
             goToPage('/error-page');
           } else {
-            console.log('Returning response.json() ', response.json());
-            return response.json();
+            return response.json().then(function (access_token) {
+              console.log('Response from successfull login: ', access_token);
+              login(access_token);
+            });
           }
         })
-        .then(function (response) {
-          console.log(
-            'Response from successfull login: ' +
-              response.body +
-              ' + acesstoken' +
-              response.body.access_token
-          );
-          login(response.body.access_token);
-        })
         .catch(function (error) {
+          localStorage.errorMessage =
+            'The server hit an error when trying to log in';
+          goToPage('/error-page');
           console.log('error response from login: ', error);
         });
     });

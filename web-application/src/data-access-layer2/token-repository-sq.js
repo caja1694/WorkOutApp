@@ -55,8 +55,14 @@ module.exports = function (container) {
 };
 
 function getTokenTableModel() {
-  return db.define('token', {
-    token: Sequelize.TEXT,
-    userId: Sequelize.TEXT,
-  });
+  return db.define(
+    'token',
+    {
+      token: Sequelize.TEXT,
+      userId: Sequelize.TEXT,
+    },
+    {
+      timestamps: false,
+    }
+  );
 }

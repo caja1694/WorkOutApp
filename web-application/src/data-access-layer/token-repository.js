@@ -10,7 +10,7 @@ module.exports = function (container) {
   return {
     storeToken: function (token, callback) {
       const createQuery =
-        'CREATE TABLE IF NOT EXISTS tokens (token VARCHAR(255), userId INT UNSIGNED)';
+        'CREATE TABLE IF NOT EXISTS tokens (id UNSIGNED AUTO_INCREMENT PRIMARY KEY,token VARCHAR(255), userId INT UNSIGNED)';
       const query = 'INSERT INTO tokens (token, userId) VALUES (?, ?)';
       const values = [token.token, token.userId];
       db.query(createQuery, function (error) {
