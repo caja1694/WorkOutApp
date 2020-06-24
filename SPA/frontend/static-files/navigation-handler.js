@@ -1,10 +1,12 @@
 // TODO: Don't write all JS code in the same file.
+var STORAGE = null;
+
 document.addEventListener('DOMContentLoaded', function () {
   console.log('REALOADING JS FILE');
   changeToPage(location.pathname);
-  if (localStorage.accessToken) {
-    console.log('localStorage.accessToken: ', localStorage.accessToken);
-    login(localStorage.accessToken);
+  if (STORAGE) {
+    console.log('STORAGE: ', STORAGE);
+    login(STORAGE);
   } else {
     logout();
   }
@@ -53,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + localStorage.accessToken,
+          Authorization: 'Bearer ' + STORAGE,
         },
         body: JSON.stringify(article),
       })
@@ -129,16 +131,16 @@ document.addEventListener('DOMContentLoaded', function () {
       })
         .then(function (response) {
           console.log('Response.status: ', response.status);
-          if (response.status == 500) {
-            localStorage.errorMessage =
-              'The server hit an error when trying to log in';
-            goToPage('/error-page');
-          } else if (response.status == 400) {
-            localStorage.errorMessage = 'Wrong username or password';
-            goToPage('/error-page');
-          } else {
+          if (response.status != 200) {
+            console.log('Error login in: ', response.status);
+            localStorage.errorMessage = getErrorMessage(response.status);
+            const loginError = document.getElementById('login-error');
+            loginError.innerText = localStorage.errorMessage;
+            goToPage('/login');
+          } else if (response.status == 200) {
             return response.json().then(function (access_token) {
               console.log('Response from successfull login: ', access_token);
+              localStorage.errorMessage = '';
               login(access_token);
             });
           }
@@ -154,9 +156,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document
     .querySelector('#sign-up-page form')
     .addEventListener('submit', function (event) {
-      console.log('Pressed submit1');
       event.preventDefault();
-      console.log('Pressed submit');
       const username = document.querySelector('#sign-up-page .username').value;
       const email = document.querySelector('#sign-up-page .email').value;
       const password = document.querySelector('#sign-up-page .password').value;
@@ -181,14 +181,18 @@ document.addEventListener('DOMContentLoaded', function () {
       })
         .then(function (response) {
           if (response.status == 200) {
-            return response.json;
+            return response.json().then(function () {
+              console.log('Go to loginPage');
+              localStorage.errorMessage = '';
+              goToPage('/login');
+            });
           } else {
-            localStorage.errorMessage = 'Error creating account';
-            goToPage('/error-page');
+            console.log('Error creating account ? ', response.status);
+            localStorage.errorMessage = getErrorMessage(response.status);
+            const signUpError = document.getElementById('sign-up-error');
+            signUpError.innerText = localStorage.errorMessage;
+            goToPage('/sign-up');
           }
-        })
-        .then(function (body) {
-          goToPage('/login');
         })
         .catch(function (error) {
           localStorage.errorMessage = error;
@@ -244,10 +248,7 @@ function fetchArticle(id) {
       localStorage.articleTitle = article.title;
       localStorage.articleDescription = article.description;
       localStorage.articleContent = article.content;
-      if (
-        localStorage.accessToken &&
-        localStorage.activeUser == article.username
-      ) {
+      if (STORAGE && localStorage.activeUser == article.username) {
         document.getElementById('deleteBtn').style.display = 'block';
         document.getElementById('editBtn').style.display = 'block';
       } else {
@@ -270,7 +271,7 @@ function deleteArticle(id) {
     method: 'delete',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + localStorage.accessToken,
+      Authorization: 'Bearer ' + STORAGE,
     },
   })
     .then(function (response) {
@@ -328,6 +329,8 @@ function changeToPage(url) {
       .getElementById('create-article-page')
       .classList.add('current-page');
   } else if (url == '/logout') {
+    console.log('url = logout');
+    sendLogoutRequest();
     logout();
   } else if (url == '/error-page') {
     const errorMessage = document.getElementById('error-message');
@@ -345,16 +348,67 @@ function setContent() {
   document.getElementById('update-content').value = localStorage.articleContent;
 }
 
-function login(accessToken) {
-  localStorage.accessToken = accessToken;
+function login(token) {
+  console.log('Loginfunc got accestoken: ', token.access_token);
+  const aToken = {
+    id: token.access_token.id,
+    token: token.access_token.token,
+    userId: token.access_token.userId,
+  };
+  STORAGE = aToken;
+  console.log('databvals: ', STORAGE);
   document.body.classList.add('isLoggedIn');
   document.body.classList.remove('isLoggedOut');
   goToPage('/');
 }
 
 function logout() {
-  localStorage.accessToken = '';
+  console.log('In logout()');
+  STORAGE = '';
   document.body.classList.remove('isLoggedIn');
   document.body.classList.add('isLoggedOut');
   goToPage('/');
+}
+
+function sendLogoutRequest() {
+  console.log('Trying to logout with token: ', STORAGE);
+  fetch('http://localhost:8080/rest-api/logout', {
+    method: 'delete',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Authorization: JSON.stringify(STORAGE),
+    },
+  })
+    .then(function (response) {
+      console.log('Got response from logout');
+      if (response.status == 200) {
+        goToPage('/');
+      } else {
+        console.log('Logout failed ?');
+      }
+    })
+    .catch(function (error) {
+      console.log('Logout failed');
+    });
+}
+
+function getErrorMessage(statusCode) {
+  switch (statusCode) {
+    case 400:
+      return 'Error creating account: Username has to be between 3 and 9 characters and password must be more than 3 characters.';
+    case 401:
+      return 'You are not authroized to do that';
+    case 404:
+      return 'Resource not found';
+    case 409:
+      return 'Username is already taken';
+    case 460:
+      return 'Wrong username or password';
+    case 461:
+      return 'Account is already logged in on another device';
+    case 500:
+      return 'The server hit an error';
+    default:
+      return 'Oups we hit an error';
+  }
 }

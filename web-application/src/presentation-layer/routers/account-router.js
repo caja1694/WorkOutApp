@@ -119,6 +119,9 @@ function errorHandler(errorCode) {
     case 'ERR_PASSWORD_NO_MATCH':
       errorMessage = "Passwords didn't match";
       break;
+    case 'ERR_PASSWORD_TO_SHORT':
+      errorMessage = 'Password must be atleast 4 characters long';
+      break;
     case 'ERR_AUTH':
       errorMessage = 'You are not authorized to do that';
     default:

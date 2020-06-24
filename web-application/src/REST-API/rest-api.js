@@ -1,16 +1,16 @@
 const express = require('express');
 
+const WRONG_PASSWORD = 460;
+const TOKEN_ALREADY_EXISTS = 461;
+
 module.exports = function (container) {
   const router = express.Router();
 
   router.use(function (request, response, next) {
     response.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-    response.setHeader('Access-Control-Allow-Methods', 'http://localhost:3000');
-    response.setHeader('Access-Control-Allow-Headers', 'http://localhost:3000');
-    response.setHeader(
-      'Access-Control-Expose-Headers',
-      'http://localhost:3000'
-    );
+    response.setHeader('Access-Control-Allow-Methods', '*');
+    response.setHeader('Access-Control-Allow-Headers', '*');
+    response.setHeader('Access-Control-Expose-Headers', '*');
     next();
   });
 
@@ -113,16 +113,13 @@ module.exports = function (container) {
       password: request.body.password,
       confirmationPassword: request.body.confirmationPassword,
     };
-    console.log('Sign up request, got model: ', account);
 
     container.accountManager.createAccount(account, function (errors) {
-      console.log('Creating new account');
       if (0 < errors.length) {
         const error = errorHandler(errors[0]);
         response.status(error.statusCode).json({ error: error.errorMessage });
       } else {
-        console.log('Created new account');
-        response.status(200).end();
+        response.status(200).json({ error: '' });
       }
     });
   });
@@ -146,13 +143,34 @@ module.exports = function (container) {
     ) {
       if (0 < errors.length) {
         const error = errorHandler(errors[0]);
-        console.log('Error getting accesstoken in rest-api: ', errors[0]);
+        console.log(
+          'Error getting accesstoken in rest-api: ',
+          error.statusCode
+        );
         response.status(error.statusCode).json({ error: error.errorMessage });
       } else {
-        console.log('REST_API Responding with accessToken', accessToken);
+        console.log(
+          'REST_API Responding with accessToken',
+          accessToken.dataValues
+        );
         response.status(200).json({
           access_token: accessToken,
         });
+      }
+    });
+  });
+
+  // Logout
+  router.delete('/logout', function (request, response) {
+    const token = JSON.parse(request.headers.authorization);
+    console.log('in rest-api, deleting token: ', token.token);
+    container.tokenRepo.removeToken(token, function (errors) {
+      if (0 < errors) {
+        console.log('error deleting token');
+        response.status(500).json({ error: 'Error deleting access token' });
+      } else {
+        console.log('Successfully deleted token');
+        response.status(200).json();
       }
     });
   });
@@ -166,14 +184,19 @@ function errorHandler(errorCode) {
     errorMessage: null,
     statusCode: null,
   };
+  console.log('Error code: ', errorCode);
   switch (errorCode) {
     case 'ERR_USERNAME_MISSING':
       message = 'invalid_client';
-      status = 400;
+      status = 460;
+      break;
+    case 'ERR_DUP_ENTRY':
+      message = 'invalid_client';
+      status = 409;
       break;
     case 'ERR_WRONG_PASSWORD':
       message = 'invalid_client';
-      status = 400;
+      status = WRONG_PASSWORD;
       break;
     case 'ERR_DATABASE':
       message = 'server_error';
@@ -191,9 +214,18 @@ function errorHandler(errorCode) {
       message = 'client_error';
       status = 400;
       break;
+    case 'ERR_PASSWORD_TO_SHORT':
+      message = 'client_error';
+      status = 400;
+      break;
     case 'ERR_NOT_AUTHORIZED':
       message = 'unauthorized_client';
-      status = 400;
+      status = 401;
+      break;
+    case 'ERR_ALREADY_SIGNED_IN':
+      message = 'client_error';
+      status = TOKEN_ALREADY_EXISTS;
+      break;
     default:
       message = 'server_error';
       status = 500;

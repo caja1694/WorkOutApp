@@ -1,5 +1,6 @@
 const MIN_USERNAME_LENGTH = 3;
 const MAX_USERNAME_LENGTH = 10;
+const MIN_PASSWORD_LENGTH = 4;
 
 module.exports = function (container) {
   return {
@@ -12,6 +13,8 @@ module.exports = function (container) {
         errors.push('ERR_USERNAME_TO_SHORT');
       } else if (MAX_USERNAME_LENGTH < account.username.length) {
         errors.push('ERR_USERNAME_TO_LONG');
+      } else if (MIN_PASSWORD_LENGTH > account.password.length) {
+        errors.push('ERR_PASSWORD_TO_SHORT');
       } else if (account.password != account.confirmationPassword) {
         errors.push('ERR_PASSWORD_NO_MATCH');
       }

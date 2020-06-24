@@ -28,8 +28,13 @@ module.exports = function (container) {
           callback([], token);
         })
         .catch(function (error) {
-          console.log('Error in token repo: ', error);
-          callback(['ERR_DATABASE']);
+          if (error.parent.code == 'ER_DUP_ENTRY') {
+            console.log('ER_DUP_ENTRY');
+            callback(['ERR_ALREADY_SIGNED_IN'], null);
+          } else {
+            console.log('ERROR in storeToken: ', error);
+            callback(['ERR_DATABASE'], null);
+          }
         });
     },
     getToken: function (token) {
@@ -50,6 +55,36 @@ module.exports = function (container) {
           callback(['ERR_DATABASE']);
         });
       console.log('getToken', token);
+    },
+    getAllTokens: function (callback) {
+      const table = getTokenTableModel();
+      table
+        .findAll()
+        .then(function (tokens) {
+          const tokensToReturn = [];
+          for (let i = 0; i < tokens.length; i++) {
+            console.log('Token: ', tokens[i].dataValues);
+            tokensToReturn.push(tokens[i].dataValues);
+          }
+          callback([], tokensToReturn);
+        })
+        .catch(function (error) {
+          console.log('Error getting all tokens: ', error);
+          callback(['ERR_DATABASE'], null);
+        });
+    },
+    removeToken: function (token, callback) {
+      const table = getTokenTableModel();
+      table
+        .destroy({ where: { token: token.token } })
+        .then(function (result) {
+          console.log('Token: ' + result + 'was destroyed');
+          callback([]);
+        })
+        .catch(function (error) {
+          console.log('Error destroying token: ', error);
+          callback(['ERR_DATABASE']);
+        });
     },
   };
 };
