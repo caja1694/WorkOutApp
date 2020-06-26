@@ -45,24 +45,36 @@ module.exports = function (container) {
 
   // Create article
   router.post('/articles', function (request, response) {
+    var token = null;
     const article = {
       title: request.body.title,
       description: request.body.description,
       content: request.body.content,
       username: request.body.username,
+      ownerId: request.body.ownerId,
     };
+    try {
+      token = JSON.parse(request.headers.authorization);
+      console.log('Token  = ', token);
+    } catch (error) {
+      console.log('No token received');
+      response.status(401).json();
+      return;
+    }
 
-    container.articleManager.createArticle(article, function (errors, article) {
-      console.log('Article received from DLL to rest-api: ', article);
-      const id = article.id;
-
+    container.articleManager.createArticle(article, token, function (
+      errors,
+      article
+    ) {
+      console.log('RestApi got article: ', article);
       if (errors.includes('ERR_DATABASE')) {
         console.log('Error 500 in create article');
         response.status(500).end();
       } else if (0 < errors.length) {
-        console.log('Error 400 in create article');
-        response.status(400).json(errors);
+        const error = errorHandler(errors[0]);
+        response.status(400).json(error);
       } else {
+        const id = article.id;
         console.log('Created article -> Redirecting to /articles/id', id);
         response.setHeader('Location', '/articles/' + id);
         response.status(201).end();
@@ -73,16 +85,27 @@ module.exports = function (container) {
   // Update article
   router.put('/articles/:id', function (request, response) {
     const id = request.params.id;
+    var token = null;
+    try {
+      token = JSON.parse(request.headers.authorization);
+    } catch (error) {
+      console.log('rest-api error updating article', error);
+      response.status(401).json();
+    }
     const article = {
       title: request.body.title,
       description: request.body.description,
       content: request.body.content,
     };
-    container.articleManager.updateArticle(article, id, function (errors, id) {
-      if (errors.includes('databaseError')) {
+    container.articleManager.updateArticle(article, id, token, function (
+      errors,
+      id
+    ) {
+      if (errors.includes('ERR_DATABASE')) {
         response.status(500).end();
       } else if (0 < errors.length) {
-        response.status(400).json(errors);
+        const error = errorHandler(errors[0]);
+        response.status(error.statusCode).json({ error: error.errorMessage });
       } else {
         response.setHeader('Location', '/articles/');
         response.status(204).end();
@@ -93,12 +116,21 @@ module.exports = function (container) {
   // Delete article
   router.delete('/articles/:id', function (request, response) {
     const id = request.params.id;
-    console.log('Request.decoded :', request.decoded);
+    var token = null;
+    try {
+      token = JSON.parse(request.headers.authorization);
+      console.log('authheader: ', token);
+    } catch (error) {
+      console.log('Delete article in api error', error);
+      response.status(401).json();
+      return;
+    }
 
-    container.articleManager.deleteArticle(id, function (errors) {
+    container.articleManager.deleteArticle(id, token, function (errors) {
       if (0 < errors.length) {
+        const error = errorHandler(errors[0]);
         console.log('error deleting article: ', errors);
-        response.status(500).end();
+        response.status(error.statusCode).json({ error: error.errorMessage });
       } else {
         console.log('Article deleted');
         response.status(204).end();

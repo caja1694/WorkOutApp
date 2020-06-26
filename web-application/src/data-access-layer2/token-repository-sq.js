@@ -37,7 +37,7 @@ module.exports = function (container) {
           }
         });
     },
-    getToken: function (token) {
+    getToken: function (token, callback) {
       const table = getTokenTableModel();
       table
         .findOne({

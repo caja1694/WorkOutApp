@@ -1,13 +1,22 @@
 // TODO: Don't write all JS code in the same file.
-var STORAGE = null;
+var TOKEN = null;
 
 document.addEventListener('DOMContentLoaded', function () {
   console.log('REALOADING JS FILE');
   changeToPage(location.pathname);
-  if (STORAGE) {
-    console.log('STORAGE: ', STORAGE);
-    login(STORAGE);
+  if (localStorage.token_val) {
+    console.log(
+      'localstorage: ' + localStorage.userId + ' - ' + localStorage.token_val
+    );
+    TOKEN = {
+      id: localStorage.token_id,
+      token: localStorage.token_val,
+      userId: localStorage.token_userId,
+    };
+    console.log('STORAGE: ', TOKEN);
+    login(TOKEN);
   } else {
+    console.log('NO STORAGE ? :S');
     logout();
   }
 
@@ -50,12 +59,14 @@ document.addEventListener('DOMContentLoaded', function () {
         description: description,
         content: content,
         username: localStorage.activeUser,
+        ownerId: TOKEN.userId,
       };
+      console.log('Sending article: ', article);
       fetch('http://localhost:8080/rest-api/articles', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + STORAGE,
+          Authorization: JSON.stringify(TOKEN),
         },
         body: JSON.stringify(article),
       })
@@ -64,7 +75,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const location = response.headers.get('Location');
             goToPage(location);
           } else {
-            localStorage.errorMessage = 'Error creating new article';
+            if (response.status == 401)
+              localStorage.errorMessage =
+                'You need to login to create a new article';
+            else localStorage.errorMessage = 'Error creating new article';
             goToPage('/error-page');
           }
         })
@@ -92,6 +106,7 @@ document.addEventListener('DOMContentLoaded', function () {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: JSON.stringify(TOKEN),
         },
         body: JSON.stringify(article),
       })
@@ -140,8 +155,9 @@ document.addEventListener('DOMContentLoaded', function () {
           } else if (response.status == 200) {
             return response.json().then(function (access_token) {
               console.log('Response from successfull login: ', access_token);
+              localStorage.activeUser = username;
               localStorage.errorMessage = '';
-              login(access_token);
+              login(access_token.access_token);
             });
           }
         })
@@ -248,10 +264,12 @@ function fetchArticle(id) {
       localStorage.articleTitle = article.title;
       localStorage.articleDescription = article.description;
       localStorage.articleContent = article.content;
-      if (STORAGE && localStorage.activeUser == article.username) {
+      if (TOKEN && localStorage.activeUser == article.username) {
         document.getElementById('deleteBtn').style.display = 'block';
         document.getElementById('editBtn').style.display = 'block';
+        console.log('IN IF');
       } else {
+        console.log('IN ELSE');
         document.getElementById('deleteBtn').style.display = 'none';
         document.getElementById('editBtn').style.display = 'none';
       }
@@ -271,7 +289,7 @@ function deleteArticle(id) {
     method: 'delete',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + STORAGE,
+      Authorization: JSON.stringify(TOKEN),
     },
   })
     .then(function (response) {
@@ -349,14 +367,17 @@ function setContent() {
 }
 
 function login(token) {
-  console.log('Loginfunc got accestoken: ', token.access_token);
-  const aToken = {
-    id: token.access_token.id,
-    token: token.access_token.token,
-    userId: token.access_token.userId,
+  console.log('Loginfunc got accestoken: ', token);
+  TOKEN = {
+    id: token.id,
+    token: token.token,
+    userId: token.userId,
   };
-  STORAGE = aToken;
-  console.log('databvals: ', STORAGE);
+  localStorage.token_val = TOKEN.token;
+  localStorage.token_id = TOKEN.id;
+  localStorage.token_userId = TOKEN.userId;
+
+  console.log('databvals: ', TOKEN);
   document.body.classList.add('isLoggedIn');
   document.body.classList.remove('isLoggedOut');
   goToPage('/');
@@ -364,24 +385,27 @@ function login(token) {
 
 function logout() {
   console.log('In logout()');
-  STORAGE = '';
+  TOKEN = '';
+  localStorage.clear();
   document.body.classList.remove('isLoggedIn');
   document.body.classList.add('isLoggedOut');
   goToPage('/');
 }
 
 function sendLogoutRequest() {
-  console.log('Trying to logout with token: ', STORAGE);
+  console.log('Trying to logout with token: ', TOKEN);
   fetch('http://localhost:8080/rest-api/logout', {
     method: 'delete',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      Authorization: JSON.stringify(STORAGE),
+      Authorization: JSON.stringify(TOKEN),
     },
   })
     .then(function (response) {
       console.log('Got response from logout');
       if (response.status == 200) {
+        TOKEN = '';
+        localStorage.clear();
         goToPage('/');
       } else {
         console.log('Logout failed ?');

@@ -14,12 +14,13 @@ module.exports = function (container) {
         Success Value: ID of the new article
     */
     createArticle: function (article, callback) {
-      const query = `INSERT INTO articles (title, description ,content, username) VALUES (?, ?, ?, ?)`;
+      const query = `INSERT INTO articles (title, description ,content, username, ownerId) VALUES (?, ?, ?, ?, ?)`;
       const values = [
         article.title,
         article.description,
         article.content,
         article.username,
+        article.ownerId,
       ];
 
       db.query(query, values, function (error, results) {

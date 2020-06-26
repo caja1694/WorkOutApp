@@ -84,6 +84,7 @@ module.exports = function ({ accountManager }) {
         };
         response.render('accounts-sign-in.hbs', error);
       } else {
+        request.session.type = 'session';
         request.session.activeUser = {
           username: accountFromDb.username,
           id: accountFromDb.accountId,

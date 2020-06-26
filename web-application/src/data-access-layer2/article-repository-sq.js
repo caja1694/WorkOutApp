@@ -23,17 +23,21 @@ module.exports = function () {
     */
     createArticle: function (article, callback) {
       const articleModel = getArticleTableModel();
+      console.log('Article id received : ', article);
       articleModel
         .create({
           title: article.title,
           description: article.description,
           content: article.content,
           username: article.username,
+          ownerId: article.ownerId,
         })
         .then(function (result) {
+          console.log('Created article with ownerId: ', result.ownerId);
           callback([], result);
         })
         .catch(function (error) {
+          console.log('Error creating article: ', error);
           callback(['ERR_DATABASE'], null);
         });
     },
@@ -80,21 +84,24 @@ module.exports = function () {
         Possible errors: Database error
         Success Value: The ID of the deleted article 
     */
-    deleteArticle: function (id, callback) {
+    deleteArticle: function (id, ownerId, callback) {
       const articleModel = getArticleTableModel();
+      console.log('Deleting article with owner id: ', ownerId);
       articleModel
         .destroy({
-          where: { id: id },
+          where: { id: id, ownerId: ownerId },
         })
-        .then(function () {
+        .then(function (result) {
+          console.log('Deleted article in repo got no errors', result);
           callback([]);
         })
         .catch(function (error) {
+          console.log('Error deleting article: ', error);
           callback(['ERR_DATABASE']);
         });
     },
 
-    updateArticle: function (article, articleId, callback) {
+    updateArticle: function (article, articleId, ownerId, callback) {
       const articleModel = getArticleTableModel();
       articleModel
         .update(
@@ -104,7 +111,7 @@ module.exports = function () {
             content: article.content,
           },
           {
-            where: { id: articleId },
+            where: { id: articleId, ownerId: ownerId },
           }
         )
         .then(function () {
@@ -127,6 +134,7 @@ function getArticleTableModel() {
       description: Sequelize.TEXT,
       content: Sequelize.TEXT,
       username: Sequelize.TEXT,
+      ownerId: Sequelize.TEXT,
     },
     {
       timestamps: false,

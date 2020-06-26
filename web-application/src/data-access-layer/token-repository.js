@@ -22,8 +22,12 @@ module.exports = function (container) {
       });
       db.query(query, values, function (error, token) {
         if (error) {
-          console.log('Error storing token: ', error);
-          callback(['ERR_DATABASE'], null);
+          if ((error.parent.code = 'ER_DUP_ENTRY')) {
+            callback(['ERR_ALREADY_SIGNED_IN'], null);
+          } else {
+            console.log('Error storing token: ', error.parent.code);
+            callback(['ERR_DATABASE'], null);
+          }
         } else {
           console.log('Successfully stored new token: ', token);
           callback([], token);
@@ -35,12 +39,29 @@ module.exports = function (container) {
       const query = 'SELECT * FROM tokens WHERE token = ? LIMIT 1';
       const values = [token.token];
       db.query(query, values, function (error, token) {
-        if (error) {
-          console.log('Error retreiving token from db: ', error);
-          callback(['ERR_DATABASE'], null);
-        } else {
+        if (token) {
           console.log('Got token from database: ', token);
           callback([], token);
+        } else {
+          console.log('Error retreiving token from db: ', error);
+          callback(['ERR_TOKEN_MISSING'], null);
+        }
+      }).catch(function (error) {
+        console.log('Cathing error retreiving token', error);
+        callback(['ERR_DATABASE'], null);
+      });
+    },
+    // Delete token
+    removeToken: function (token, callback) {
+      const query = 'DELETE FROM tokens WHERE token = ?';
+      const values = token.token;
+
+      db.query(query, values, function (error) {
+        if (error) {
+          console.log('Error deleting token', error);
+          callback(['ERR_DATABASE']);
+        } else {
+          callback([]);
         }
       });
     },

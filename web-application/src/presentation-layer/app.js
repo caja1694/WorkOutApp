@@ -102,6 +102,7 @@ app.use(
     secret: 'keyboard cat',
     resave: false,
     saveUninitialized: false,
+    type: 'session',
     store: new redisStore({ client: redisClient }),
   })
 );

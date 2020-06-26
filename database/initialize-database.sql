@@ -12,15 +12,17 @@ CREATE TABLE articles (
 	title VARCHAR(250) NOT NULL,
 	description VARCHAR(500) NOT NULL,
 	content VARCHAR(8000) NOT NULL,
-	username VARCHAR(50) NOT NULL
+	username VARCHAR(50) NOT NULL,
+	ownerId INT UNSIGNED,
 );
 
 CREATE TABLE workouts (
 	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 	title VARCHAR(50) NOT NULL,
 	username VARCHAR(20) NOT NULL,
+	ownerId INT UNSIGNED,
 	createdAt VARCHAR(50),
-	updatedAt VARCHAR(50)
+	updatedAt VARCHAR(50),
 );
 
 CREATE TABLE exercises (

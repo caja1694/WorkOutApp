@@ -23,12 +23,12 @@ module.exports = function ({ articleManager }) {
   });
 
   router.get('/about', function (request, response) {
-    const model = getSession(request);
+    const model = getSessionUsername(request);
     response.render('about.hbs', model);
   });
 
   router.get('/contact', function (request, response) {
-    const model = getSession(request);
+    const model = getSessionUsername(request);
     response.render('contact.hbs', model);
   });
 
@@ -36,7 +36,7 @@ module.exports = function ({ articleManager }) {
     const model = {
       article: null,
       error: null,
-      activeUser: getSession(request),
+      activeUser: getSessionUsername(request),
       author: false,
     };
 
@@ -66,7 +66,7 @@ module.exports = function ({ articleManager }) {
 
   router.get('/create-article', function (request, response) {
     const model = {
-      activeUser: getSession(request),
+      activeUser: request.session.activeUser,
     };
     if (request.session.activeUser) {
       response.render('create-article.hbs', model);
@@ -76,13 +76,18 @@ module.exports = function ({ articleManager }) {
   });
 
   router.post('/create-article', function (request, response) {
+    console.log(
+      'Creating article with session.activeUser: ',
+      request.session.activeUser.id
+    );
     const model = {
       title: request.body.title,
       description: request.body.description,
       content: request.body.content,
       username: request.session.activeUser.username,
+      ownerId: request.session.activeUser.id,
     };
-    articleManager.createArticle(model, function (errors) {
+    articleManager.createArticle(model, request.session, function (errors) {
       if (0 < errors.length) {
         const error = {
           error: errors[0],
@@ -96,7 +101,10 @@ module.exports = function ({ articleManager }) {
   });
 
   router.post('/deleteArticle/:id', function (request, response) {
-    articleManager.deleteArticle(request.params.id, function (error) {
+    console.log('in delete article');
+    articleManager.deleteArticle(request.params.id, request.session, function (
+      error
+    ) {
       if (0 < error.length) {
         console.log('error in deletepost: ', error);
         response.redirect('/');
@@ -108,7 +116,7 @@ module.exports = function ({ articleManager }) {
   return router;
 };
 
-function getSession(request) {
+function getSessionUsername(request) {
   if (request.session.activeUser) {
     return request.session.activeUser.username;
   }
