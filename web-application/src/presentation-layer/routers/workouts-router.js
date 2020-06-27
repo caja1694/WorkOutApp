@@ -4,18 +4,31 @@ module.exports = function ({ myWorkoutManager }) {
   const router = express.Router();
 
   router.get('/', function (request, response) {
-    const username = request.session.activeUser.username;
-
-    myWorkoutManager.getAllWorkouts(username, function (errors, workouts) {
+    if (userIsLoggedIn(request)) {
+      const username = request.session.activeUser.username;
+      myWorkoutManager.getAllWorkouts(username, function (errors, workouts) {
+        const model = {
+          workouts: workouts,
+          activeUser: username,
+          errors: errors,
+        };
+        response.render('my-workouts.hbs', model);
+      });
+    } else {
+      console.log('Must be logged in to view workouts');
       const model = {
-        workouts: workouts,
-        activeUser: username,
-        errors: errors,
+        notAuthorized: true,
       };
-      response.render('my-workouts.hbs', model);
-    });
+      response.render('accounts-sign-in.hbs', model);
+    }
   }),
     router.get('/singleWorkout/:id', function (request, response) {
+      if (!userIsLoggedIn(request)) {
+        const model = {
+          notAuthorized: true,
+        };
+        response.render('accounts-sign-in.hbs', model);
+      }
       const model = {
         exercises: null,
         errors: null,
@@ -34,6 +47,12 @@ module.exports = function ({ myWorkoutManager }) {
       });
     }),
     router.get('/create-workout', function (request, response) {
+      if (!userIsLoggedIn(request)) {
+        const model = {
+          notAuthorized: true,
+        };
+        response.render('accounts-sign-in.hbs', model);
+      }
       const model = {
         activeUser: request.session.activeUser.username,
       };
@@ -41,6 +60,12 @@ module.exports = function ({ myWorkoutManager }) {
     });
 
   router.post('/createWorkout', function (request, response) {
+    if (!userIsLoggedIn(request)) {
+      const model = {
+        notAuthorized: true,
+      };
+      response.render('accounts-sign-in.hbs', model);
+    }
     let exercises = {
       exercise: '',
       timeOrWeight: '',
@@ -77,3 +102,10 @@ module.exports = function ({ myWorkoutManager }) {
 
   return router;
 };
+
+function userIsLoggedIn(request) {
+  if (request.session.activeUser) {
+    return true;
+  }
+  return false;
+}

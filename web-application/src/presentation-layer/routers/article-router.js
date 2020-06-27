@@ -9,7 +9,6 @@ module.exports = function ({ articleManager }) {
         allArticles: articles,
         activeUser: null,
       };
-
       if (errors.length) {
         console.log('in home errors:', errors);
       }
@@ -17,7 +16,6 @@ module.exports = function ({ articleManager }) {
       if (request.session.activeUser) {
         model.activeUser = request.session.activeUser.username;
       }
-
       response.render('home.hbs', model);
     });
   });
@@ -65,12 +63,15 @@ module.exports = function ({ articleManager }) {
   });
 
   router.get('/create-article', function (request, response) {
-    const model = {
-      activeUser: request.session.activeUser,
-    };
     if (request.session.activeUser) {
+      const model = {
+        activeUser: request.session.activeUser.username,
+      };
       response.render('create-article.hbs', model);
     } else {
+      const model = {
+        notAuthorized: true,
+      };
       response.render('accounts-sign-in.hbs', model);
     }
   });

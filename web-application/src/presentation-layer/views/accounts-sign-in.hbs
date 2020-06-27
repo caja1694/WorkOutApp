@@ -3,10 +3,10 @@
 
         <h3 class="title has-text-black">Login</h3>
         <hr class="login-hr">
-        {{#if activeUser}}
-        <p class="subtitle has-text-black">Please login to proceed.</p>
+        {{#if notAuthorized}}
+        <p class="subtitle has-text-black">You need to login to be able to work with articles and workouts</p>
         {{else}}
-        <p class="subtitle has-text-black">You need to login to be able to create an article</p>
+        <p class="subtitle has-text-black">Please sign in to proceed</p>
         {{/if}}
         <p>{{error}}</p>
         <div class="box">

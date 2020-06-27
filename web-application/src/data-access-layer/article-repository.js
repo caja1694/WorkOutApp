@@ -72,14 +72,34 @@ module.exports = function (container) {
         Possible errors: Database error
         Success Value: The ID of the deleted article 
     */
-    deleteArticle: function (id, callback) {
-      const query = `DELETE FROM articles WHERE id = ? LIMIT 1`;
-      const values = [id];
+    deleteArticle: function (id, ownerId, callback) {
+      const query = `DELETE FROM articles WHERE id = ? AND ownerId = ? LIMIT 1`;
+      const values = [id, ownerId];
 
       db.query(query, values, function (error) {
         if (error) {
           callback(['ERR_DATABASE']);
         } else {
+          callback([]);
+        }
+      });
+    },
+    updateArticle: function (article, articleId, ownerId, callback) {
+      const query =
+        'UPDATE articles SET title = ?, description = ?, content = ? WHERE id = ? AND ownerId = ?';
+      const values = [
+        article.title,
+        article.description,
+        article.content,
+        articleId,
+        ownerId,
+      ];
+      db.query(query, values, function (error) {
+        if (error) {
+          console.log('error updating article, in article repo: ', error);
+          callback(['ERR_DATABASE']);
+        } else {
+          console.log('Updated article: ', article.title);
           callback([]);
         }
       });

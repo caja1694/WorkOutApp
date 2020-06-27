@@ -24,7 +24,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var inputExercise = document.createElement('input');
     inputExercise.setAttribute('name', 'exercise');
-    inputExercise.setAttribute('required', 'required');
     inputExercise.setAttribute('class', 'input');
 
     var inputTimeOrWeight = document.createElement('input');
