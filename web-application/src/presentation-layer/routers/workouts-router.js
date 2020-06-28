@@ -47,6 +47,7 @@ module.exports = function ({ myWorkoutManager }) {
       });
     }),
     router.get('/create-workout', function (request, response) {
+      console.log('IN /create-workout');
       if (!userIsLoggedIn(request)) {
         const model = {
           notAuthorized: true,
@@ -60,6 +61,7 @@ module.exports = function ({ myWorkoutManager }) {
     });
 
   router.post('/createWorkout', function (request, response) {
+    console.log('posting workout');
     if (!userIsLoggedIn(request)) {
       const model = {
         notAuthorized: true,
