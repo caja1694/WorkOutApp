@@ -5,7 +5,7 @@ const connection = mysql.createConnection({
   user: 'root',
   password: 'theRootPassword',
   database: 'webAppDatabase2',
-  port: '3307',
+  port: '3306',
 });
 
 module.exports = connection;
