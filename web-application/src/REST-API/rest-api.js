@@ -66,7 +66,7 @@ module.exports = function (container) {
       errors,
       article
     ) {
-      console.log('RestApi got article: ', article);
+      console.log('Response from article repo article: ', article);
       if (errors.includes('ERR_DATABASE')) {
         console.log('Error 500 in create article');
         response.status(500).end();

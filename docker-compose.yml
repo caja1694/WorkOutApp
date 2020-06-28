@@ -15,10 +15,8 @@ services:
     ports:
       - '3307:3307'
     environment:
-      MYSQL_HOST: database
-      MYSQL_USER: root
-      MYSQL_ROOT_PASSWORD: theRootPassword
-      MYSQL_DATABASE: webAppDatabase
+      - MYSQL_ROOT_PASSWORD=theRootPassword
+      - MYSQL_DATABASE=webAppDatabase
   database2:
     build: ./database2
     ports:

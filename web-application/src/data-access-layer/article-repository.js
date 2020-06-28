@@ -1,4 +1,10 @@
-const db = require('./db');
+const sql = require('mysql');
+const db = sql.createConnection({
+  host: 'database',
+  user: 'root',
+  password: 'theRootPassword',
+  database: 'webAppDatabase',
+});
 
 db.connect(function (error) {
   if (error) {
@@ -27,7 +33,8 @@ module.exports = function (container) {
         if (error) {
           callback(['ERR_DATABASE'], null);
         } else {
-          callback([], results.insertId);
+          results.id = results.insertId;
+          callback([], results);
         }
       });
     },

@@ -1,4 +1,10 @@
-const db = require('./db');
+const sql = require('mysql');
+const db = sql.createConnection({
+  host: 'database',
+  user: 'root',
+  password: 'theRootPassword',
+  database: 'webAppDatabase',
+});
 
 db.connect(function (error) {
   if (error) {

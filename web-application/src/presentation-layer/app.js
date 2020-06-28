@@ -65,7 +65,7 @@ const tokenRepoFun = require('../data-access-layer/token-repository');
 const tokenRepoSequelize = require('../data-access-layer2/token-repository-sq');
 
 // AddLayer1 or 2 to add the wanted dependecies
-addLayer2(container);
+addLayer1(container);
 
 // Resolve
 const myWorkoutsRouter = container.resolve('myWorkoutsRouter');
